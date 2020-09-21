@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "728675865525",
+    "firebase_url": "https://unord-fefa8.firebaseio.com",
+    "project_id": "unord-fefa8",
+    "storage_bucket": "unord-fefa8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:728675865525:android:62841b22a40b9c7ce03ffc",
+        "android_client_info": {
+          "package_name": "com.rizalord.unord.unord"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "728675865525-9uq3hmil5390tq5641prhlh549prusts.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rizalord.unord.unord",
+            "certificate_hash": "ae7596ecf3ad153e62d3bcd988e6d08cc82ff498"
+          }
+        },
+        {
+          "client_id": "728675865525-fakc80u1bnamljjuau8hdkepl8ank9jq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNL3KSK54qYk6m-qN8r9T8rzpggWVBCQI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "728675865525-fakc80u1bnamljjuau8hdkepl8ank9jq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
