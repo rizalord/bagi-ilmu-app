@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:unord/services/main_service.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -16,8 +17,10 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   navigate() {
-    Future.delayed(Duration(seconds: 5), () {
-      Modular.to.pushNamed('/login');
+    Future.delayed(Duration(seconds: 3), () {
+      MainService().isAuthenticated()
+          ? Modular.to.pushReplacementNamed('/general')
+          : Modular.to.pushReplacementNamed('/login');
     });
   }
 
