@@ -5,7 +5,7 @@ class CustomTheme {
         brightness: Brightness.light,
         textSelectionHandleColor: Colors.black,
         textSelectionColor: Colors.white,
-        primaryColor: Colors.blue,
+        primaryColor: Color(0xFFBC3686),
       );
 
   static ThemeData get darkTheme => ThemeData(

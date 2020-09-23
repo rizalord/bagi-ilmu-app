@@ -30,11 +30,12 @@ dependencies:
   hive: ^1.4.4
   google_fonts: ^1.1.0
   fluttertoast: ^7.1.1
-  salomon_bottom_bar: ^2.0.0
+  bottom_navy_bar: ^5.5.0
   dio: ^3.0.10
   path_provider: ^1.6.11
   flutter_bloc: ^4.0.1
-
+  font_awesome_flutter: ^8.8.1
+  cached_network_image: ^2.3.2+1
 
 dev_dependencies:
   flutter_test:
