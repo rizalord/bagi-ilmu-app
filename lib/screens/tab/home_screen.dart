@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:unord/blocs/user_bloc.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -624,6 +626,7 @@ class Header extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
+            width: (MediaQuery.of(context).size.width * .5) - 15,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -635,17 +638,21 @@ class Header extends StatelessWidget {
                     fontWeight: FontWeight.w300,
                   ),
                 ),
-                Text(
-                  'Brayden',
-                  style: GoogleFonts.roboto(
-                    fontSize: 36,
-                    fontWeight: FontWeight.w600,
+                BlocBuilder<UserBloc, Map>(
+                  builder: (_, user) => Text(
+                    user['username'],
+                    style: GoogleFonts.roboto(
+                      fontSize: 36,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
           ),
-          Container(
+          Expanded(
             child: Image.asset(
               'assets/images/home_illustration.png',
             ),

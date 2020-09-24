@@ -16,10 +16,14 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   navigate() {
-    Future.delayed(Duration(seconds: 3), () {
-      MainService().isAuthenticated()
-          ? Modular.to.pushReplacementNamed('/general')
-          : Modular.to.pushReplacementNamed('/login');
+    Future.delayed(Duration(seconds: 3), () async {
+      if (MainService().isAuthenticated()) {
+        await MainService().boot();
+        MainService().registerBloc();
+        Modular.to.pushReplacementNamed('/general');
+      } else {
+        Modular.to.pushReplacementNamed('/login');
+      }
     });
   }
 

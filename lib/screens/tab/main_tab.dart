@@ -1,9 +1,19 @@
+import 'dart:async';
+
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:unord/blocs/search_catatan_bloc.dart';
+import 'package:unord/blocs/tab_bloc.dart';
+import 'package:unord/blocs/user_bloc.dart';
+import 'package:unord/data/constants.dart';
+import 'package:unord/screens/tab/catatan_screen.dart';
 import 'package:unord/screens/tab/home_screen.dart';
+import 'package:unord/services/auth_service.dart';
 
 class MainTab extends StatefulWidget {
   @override
@@ -12,17 +22,73 @@ class MainTab extends StatefulWidget {
 
 class _MainTabState extends State<MainTab> {
   final _pageController = PageController(initialPage: 0);
+  TextEditingController catatanTextController = TextEditingController();
+  TextEditingController diskusiTextController = TextEditingController();
+  Timer _debounce;
+  String queryCatatan = "";
+  int _debouncetime = 500;
   int initialPage = 0;
+
+  @override
+  void initState() {
+    catatanTextController.addListener(onSearchCatatanChanged);
+    super.initState();
+  }
+
+  void onSearchCatatanChanged() {
+    setState(() {
+      queryCatatan = catatanTextController.text.trim();
+    });
+
+    if (_debounce?.isActive ?? false) _debounce.cancel();
+    _debounce = Timer(Duration(milliseconds: _debouncetime), () {
+      performSearchCatatan(catatanTextController.text);
+    });
+  }
+
+  performSearchCatatan(String query) {
+    Modular.get<SearchCatatanBloc>().add(query);
+  }
+
+  clearQueryCatatan() {
+    setState(() {
+      queryCatatan = '';
+      catatanTextController.text = '';
+    });
+  }
 
   void onPageChanged(int index) {
     _pageController.animateToPage(index,
         duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
 
-    print(index);
+    Modular.get<TabBloc>().add(index);
 
     setState(() {
       initialPage = index;
     });
+  }
+
+  void logout() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text('Apa kamu yakin ingin keluar?'),
+        actions: [
+          FlatButton(
+            onPressed: () => Modular.to.pop(),
+            child: Text('Tidak'),
+          ),
+          FlatButton(
+            onPressed: () async {
+              if (await AuthService().logout()) {
+                Modular.to.pushReplacementNamed('/login');
+              }
+            },
+            child: Text('Ya'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -37,69 +103,183 @@ class _MainTabState extends State<MainTab> {
                   ? Colors.orange[700]
                   : Colors.purple[700],
         ),
-        title: Text(
-          'Unord',
-          style: GoogleFonts.quicksand(
-            fontWeight: FontWeight.bold,
-            color: initialPage == 0
-                ? Theme.of(context).primaryColor
-                : initialPage == 1
-                    ? Colors.orange[700]
-                    : Colors.purple[700],
-            fontSize: 24,
-          ),
-        ),
+        title: initialPage == 0
+            ? Text(
+                'Unord',
+                style: GoogleFonts.quicksand(
+                  fontWeight: FontWeight.bold,
+                  color: initialPage == 0
+                      ? Theme.of(context).primaryColor
+                      : initialPage == 1
+                          ? Colors.orange[700]
+                          : Colors.purple[700],
+                  fontSize: 24,
+                ),
+              )
+            : Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 10,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(
+                    500,
+                  ),
+                  border: Border.all(
+                    color: initialPage == 0
+                        ? Theme.of(context).primaryColor
+                        : initialPage == 1
+                            ? Colors.orange[700]
+                            : Colors.purple[700],
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    SizedBox(width: 5),
+                    Icon(
+                      Icons.search,
+                      size: 17,
+                      color: Color(0xFF958989),
+                    ),
+                    SizedBox(width: 5),
+                    Expanded(
+                      child: TextField(
+                        controller: catatanTextController,
+                        decoration: InputDecoration(
+                          hintText: 'Cari Catatan',
+                          hintStyle: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13.5,
+                            color: Color(0xFF958989),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: 6.5,
+                          ),
+                          border: InputBorder.none,
+                          isDense: true,
+                        ),
+                      ),
+                    ),
+                    queryCatatan.length != 0
+                        ? GestureDetector(
+                            onTap: clearQueryCatatan,
+                            child: Icon(
+                              Icons.close,
+                              size: 17,
+                              color: Color(0xFF958989),
+                            ),
+                          )
+                        : Container(),
+                  ],
+                ),
+              ),
         centerTitle: true,
+        actions: [
+          initialPage != 0
+              ? IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () {
+                    initialPage == 1
+                        ? Modular.to.pushNamed('/note/upload')
+                        : null;
+                  },
+                )
+              : Container(),
+        ],
       ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            DrawerHeader(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.width * .39,
+              decoration: BoxDecoration(
+                color: initialPage == 0
+                    ? Theme.of(context).primaryColor.withOpacity(.3)
+                    : initialPage == 1
+                        ? Colors.orange[700].withOpacity(.3)
+                        : Colors.purple[700].withOpacity(.3),
+              ),
+              child: Stack(
                 children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.white,
-                    radius: 33,
+                  Positioned.fill(
+                    child: Image.asset(
+                      'assets/images/sidebar_bg.jpg',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Positioned.fill(
                     child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50),
-                        border: Border.all(width: 2, color: Colors.white),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(50),
-                        child: CachedNetworkImage(
-                          imageUrl:
-                              'https://avatars1.githubusercontent.com/u/49712569?s=460&u=88f8d12ee2c71e442fb30ad4138d33bbe254fd87&v=4',
-                          fit: BoxFit.cover,
+                      color: initialPage == 0
+                          ? Theme.of(context).primaryColor.withOpacity(.8)
+                          : initialPage == 1
+                              ? Colors.orange[700].withOpacity(.8)
+                              : Colors.purple[700].withOpacity(.8),
+                    ),
+                  ),
+                  Positioned.fill(
+                    child: BlocBuilder<UserBloc, Map>(
+                      builder: (context, user) => Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 18,
+                          vertical: 26,
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: Colors.white,
+                              radius: 33,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  border:
+                                      Border.all(width: 2, color: Colors.white),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(50),
+                                  child: user['image'] != null
+                                      ? CachedNetworkImage(
+                                          imageUrl: URLs.host.substring(
+                                                  0, URLs.host.length - 1) +
+                                              user['image']['formats']
+                                                  ['thumbnail']['url'],
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Image.asset(
+                                          'assets/images/default_user_icon.png',
+                                          fit: BoxFit.cover,
+                                        ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 10, width: 10),
+                            Expanded(
+                              child: Container(
+                                height: 66,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  user['username'],
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 17,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                          ],
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 10),
-                  Text(
-                    'Ahmad Khamdani',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 17,
-                      color: Colors.white,
-                    ),
-                  ),
-                  SizedBox(height: 8),
                 ],
               ),
-              decoration: BoxDecoration(
-                  color: initialPage == 0
-                      ? Theme.of(context).primaryColor
-                      : initialPage == 1
-                          ? Colors.orange[700]
-                          : Colors.purple[700]),
             ),
             ListTile(
               title: Text('Profil'),
               leading: Icon(Icons.account_circle),
-              onTap: () {},
+              onTap: () => Modular.to.pushNamed('/profile'),
             ),
             ListTile(
               title: Text('Catatanku'),
@@ -114,7 +294,7 @@ class _MainTabState extends State<MainTab> {
             ListTile(
               title: Text('Logout'),
               leading: Icon(Icons.logout),
-              onTap: () {},
+              onTap: logout,
             ),
           ],
         ),
@@ -157,7 +337,7 @@ class _MainTabState extends State<MainTab> {
         physics: NeverScrollableScrollPhysics(),
         children: [
           HomeScreen(),
-          HomeScreen(),
+          CatatanScreen(),
           HomeScreen(),
         ],
       ),

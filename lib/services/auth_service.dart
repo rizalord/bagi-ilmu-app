@@ -6,11 +6,22 @@ import 'package:unord/helpers/database_helper.dart';
 class AuthService extends DatabaseHelper {
   bool saveUserData(dynamic data) {
     try {
-      box.put('access_token', data['jwt']);
+      if (data['jwt'] != null) box.put('access_token', data['jwt']);
       box.put('user_data', data['user']);
 
-      Modular.get<AuthBloc>().add(data['jwt']);
+      if (data['jwt'] != null) Modular.get<AuthBloc>().add(data['jwt']);
       Modular.get<UserBloc>().add(data['user']);
+    } catch (e) {
+      return false;
+    }
+
+    return true;
+  }
+
+  Future<bool> logout() async {
+    try {
+      await box.delete('access_token');
+      await box.delete('user_data');
     } catch (e) {
       return false;
     }

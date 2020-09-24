@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:unord/helpers/network_helper.dart';
 import 'package:unord/services/auth_service.dart';
+import 'package:unord/services/main_service.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -33,8 +34,8 @@ class _LoginScreenState extends State<LoginScreen> {
         isLoading = true;
       });
 
-      Response response = await NetworkHelper().post(
-          'auth/local', {'identifier': email, 'password': password});
+      Response response = await NetworkHelper()
+          .post('auth/local', {'identifier': email, 'password': password});
 
       setState(() {
         isLoading = false;
@@ -43,8 +44,11 @@ class _LoginScreenState extends State<LoginScreen> {
       if (response.data['statusCode'] != null)
         message = response.data['message'].first['messages'].first['message'];
       else {
-        if (AuthService().saveUserData(response.data))
+        if (AuthService().saveUserData(response.data)) {
+          await MainService().boot();
+          MainService().registerBloc();
           Modular.to.pushReplacementNamed('/general');
+        }
       }
     }
 

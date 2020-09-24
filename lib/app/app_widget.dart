@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:unord/blocs/auth_bloc.dart';
+import 'package:unord/blocs/education_bloc.dart';
+import 'package:unord/blocs/liked_notes_bloc.dart';
+import 'package:unord/blocs/search_catatan_bloc.dart';
+import 'package:unord/blocs/subject_bloc.dart';
+import 'package:unord/blocs/tab_bloc.dart';
 import 'package:unord/blocs/user_bloc.dart';
 import 'package:unord/theme/styles.dart';
 
@@ -13,6 +18,15 @@ class AppWidget extends StatelessWidget {
       providers: [
         BlocProvider<AuthBloc>(create: (context) => Modular.get<AuthBloc>()),
         BlocProvider<UserBloc>(create: (context) => Modular.get<UserBloc>()),
+        BlocProvider<TabBloc>(create: (context) => Modular.get<TabBloc>()),
+        BlocProvider<SearchCatatanBloc>(
+            create: (context) => Modular.get<SearchCatatanBloc>()),
+        BlocProvider<LikedNotesBloc>(
+            create: (context) => Modular.get<LikedNotesBloc>()),
+        BlocProvider<EducationBloc>(
+            create: (context) => Modular.get<EducationBloc>()),
+        BlocProvider<SubjectBloc>(
+            create: (context) => Modular.get<SubjectBloc>()),
       ],
       child: MaterialApp(
         initialRoute: "/",
