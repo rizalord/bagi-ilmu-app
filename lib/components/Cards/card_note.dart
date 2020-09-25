@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:unord/blocs/liked_notes_bloc.dart';
@@ -65,7 +66,9 @@ class _NoteCardState extends State<NoteCard> {
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
           onTap: () {
-            print('printed root');
+            Modular.to.pushNamed('/note/detail', arguments: {
+              'id': widget.data['id'],
+            });
           },
           child: Container(
             margin: EdgeInsets.symmetric(horizontal: 14, vertical: 10),

@@ -10,6 +10,7 @@ import 'package:unord/blocs/user_bloc.dart';
 import 'package:unord/screens/auth/login_screen.dart';
 import 'package:unord/screens/auth/register_screen.dart';
 import 'package:unord/screens/auth/splash_screen.dart';
+import 'package:unord/screens/detail/detail_note_screen.dart';
 import 'package:unord/screens/profile/profile_edit_screen.dart';
 import 'package:unord/screens/profile/profile_screen.dart';
 import 'package:unord/screens/tab/main_tab.dart';
@@ -18,29 +19,34 @@ import 'package:unord/screens/upload/add_note_screen.dart';
 import 'app_widget.dart';
 
 class AppModule extends MainModule {
-
   @override
   List<Bind> get binds => [
-    Bind((_) => AuthBloc()),
-    Bind((_) => UserBloc()),
-    Bind((_) => TabBloc()),
-    Bind((_) => SearchCatatanBloc()),
-    Bind((_) => LikedNotesBloc()),
-    Bind((_) => EducationBloc()),
-    Bind((_) => SubjectBloc()),
-  ];
+        Bind((_) => AuthBloc()),
+        Bind((_) => UserBloc()),
+        Bind((_) => TabBloc()),
+        Bind((_) => SearchCatatanBloc()),
+        Bind((_) => LikedNotesBloc()),
+        Bind((_) => EducationBloc()),
+        Bind((_) => SubjectBloc()),
+      ];
 
   @override
   List<ModularRouter> get routers => [
-    ModularRouter('/', child: (_, __) =>  SplashScreen()),
-    ModularRouter('/login', child: (_, __) =>  LoginScreen()),
-    ModularRouter('/register', child: (_, __) =>  RegisterScreen()),
-    ModularRouter('/general', child: (_, __) =>  MainTab()),
-    ModularRouter('/profile', child: (_, __) =>  ProfileScreen()),
-    ModularRouter('/profile/edit', child: (_, __) =>  EditProfileScreen()),
-    ModularRouter('/note/upload', child: (_, __) =>  AddNoteScreen()),
-  ];
-  
+        ModularRouter('/', child: (_, __) => SplashScreen()),
+        ModularRouter('/login', child: (_, __) => LoginScreen()),
+        ModularRouter('/register', child: (_, __) => RegisterScreen()),
+        ModularRouter('/general', child: (_, __) => MainTab()),
+        ModularRouter('/profile', child: (_, __) => ProfileScreen()),
+        ModularRouter('/profile/edit', child: (_, __) => EditProfileScreen()),
+        ModularRouter('/note/upload', child: (_, __) => AddNoteScreen()),
+        ModularRouter(
+          '/note/detail',
+          child: (_, args) => DetailNoteScreen(
+            id: args.data['id'],
+          ),
+        ),
+      ];
+
   @override
   Widget get bootstrap => AppWidget();
 }

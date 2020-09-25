@@ -16,8 +16,7 @@ class MainService extends DatabaseHelper {
   }
 
   Future<void> getSubjects() async {
-    Response response =
-        await NetworkHelper().get('subjects');
+    Response response = await NetworkHelper().get('subjects');
 
     List<Map> data = response.data
         .map(
@@ -33,8 +32,7 @@ class MainService extends DatabaseHelper {
   }
 
   Future<void> getEducations() async {
-    Response response =
-        await NetworkHelper().get('educations');
+    Response response = await NetworkHelper().get('educations');
 
     List<Map> data = response.data
         .map(
@@ -51,8 +49,7 @@ class MainService extends DatabaseHelper {
 
   Future<void> getLikedNote() async {
     var userId = box.get('user_data')['id'];
-    Response response =
-        await NetworkHelper().get('note-likes?user.id=$userId');
+    Response response = await NetworkHelper().get('note-likes?user.id=$userId');
 
     List<Map> data = response.data
         .map(
@@ -77,11 +74,12 @@ class MainService extends DatabaseHelper {
 
   bool registerBloc() {
     try {
-
       var token = box.get('access_token', defaultValue: null);
       var userData = box.get('user_data', defaultValue: null);
       List<Map> likedNotes =
           box.get('liked_notes', defaultValue: []).cast<Map>();
+      List<Map> viewedNotes =
+          box.get('viewed_notes', defaultValue: []).cast<Map>();
 
       Modular.get<AuthBloc>().add(token);
       Modular.get<UserBloc>().add(userData);

@@ -410,7 +410,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                             return DropdownButton(
                               underline: Container(),
                               isExpanded: true,
-                              hint: Text("Pilih Jenjang Pendidikan"),
+                            hint: Text("Pilih Jenjang Pendidikan"),
                               value: pickedEducation,
                               items: newData.map((value) {
                                 return DropdownMenuItem(
