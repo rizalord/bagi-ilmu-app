@@ -5,17 +5,19 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:unord/blocs/education_bloc.dart';
 import 'package:unord/blocs/search_catatan_bloc.dart';
+import 'package:unord/blocs/search_diskusi_bloc.dart';
 import 'package:unord/blocs/subject_bloc.dart';
+import 'package:unord/components/Cards/card_diskusi.dart';
 import 'package:unord/components/Cards/card_note.dart';
 import 'package:unord/data/constants.dart';
 import 'package:unord/helpers/network_helper.dart';
 
-class CatatanScreen extends StatefulWidget {
+class DiskusiScreen extends StatefulWidget {
   @override
-  _CatatanScreenState createState() => _CatatanScreenState();
+  _DiskusiScreenState createState() => _DiskusiScreenState();
 }
 
-class _CatatanScreenState extends State<CatatanScreen>
+class _DiskusiScreenState extends State<DiskusiScreen>
     with AutomaticKeepAliveClientMixin {
   List notes = [], searchNotes = [];
   bool isLoading = true,
@@ -48,7 +50,7 @@ class _CatatanScreenState extends State<CatatanScreen>
         });
 
         Response response = await NetworkHelper()
-            .get('notes?_limit=$perPage&_start=$start&_sort=created_at:DESC');
+            .get('prs?_limit=$perPage&_start=$start&_sort=created_at:DESC');
 
         setState(() {
           isLoadingMore = false;
@@ -62,7 +64,7 @@ class _CatatanScreenState extends State<CatatanScreen>
         });
 
         String url =
-            'notes?_limit=$perPage&_start=$startSearch&_sort=created_at:DESC&title_contains=$query';
+            'prs?_limit=$perPage&_start=$startSearch&_sort=created_at:DESC&title_contains=$query';
 
         if (pickedEducation != 0) url += '&education.id=$pickedEducation';
         if (pickedSubject != null) url += '&subject.id=$pickedSubject';
@@ -79,23 +81,21 @@ class _CatatanScreenState extends State<CatatanScreen>
   }
 
   void retrieveAllData() async {
-    if (this.mounted)
-      setState(() {
-        isLoading = true;
-      });
+    setState(() {
+      isLoading = true;
+    });
 
-    String url = 'notes?_limit=$perPage&_start=$start&_sort=created_at:DESC';
+    String url = 'prs?_sort=created_at:DESC';
 
     if (pickedEducation != 0) url += '&education.id=$pickedEducation';
     if (pickedSubject != null) url += '&subject.id=$pickedSubject';
 
     Response response = await NetworkHelper().get(url);
 
-    if (this.mounted)
-      setState(() {
-        isLoading = false;
-        notes = response.data;
-      });
+    setState(() {
+      isLoading = false;
+      notes = response.data;
+    });
   }
 
   Future<void> onRefresh() async {
@@ -143,7 +143,7 @@ class _CatatanScreenState extends State<CatatanScreen>
     });
 
     String url =
-        'notes?_limit=$perPage&_start=$startSearch&_sort=created_at:DESC&title_contains=$query';
+        'prs?_limit=$perPage&_start=$startSearch&_sort=created_at:DESC&title_contains=$query';
 
     if (pickedEducation != 0) url += '&education.id=$pickedEducation';
     if (pickedSubject != null) url += '&subject.id=$pickedSubject';
@@ -174,12 +174,12 @@ class _CatatanScreenState extends State<CatatanScreen>
       backgroundColor: Colors.white,
       body: NotificationListener<ScrollNotification>(
         onNotification: (scrollNotification) {
-          if (scrollNotification is ScrollEndNotification) loadMore();
+          // if (scrollNotification is ScrollEndNotification) loadMore();
         },
         child: RefreshIndicator(
           onRefresh: onRefresh,
           child: SingleChildScrollView(
-            child: BlocBuilder<SearchCatatanBloc, String>(
+            child: BlocBuilder<SearchDiskusiBloc, String>(
               builder: (_, searchQuery) {
                 if (this.mounted && query != searchQuery) {
                   query = searchQuery;
@@ -212,7 +212,7 @@ class _CatatanScreenState extends State<CatatanScreen>
                                   itemCount: notes.length,
                                   itemBuilder: (ctx, idx) => Container(
                                     margin: EdgeInsets.only(bottom: 10),
-                                    child: NoteCard(data: notes[idx]),
+                                    child: DiskusiCard(data: notes[idx]),
                                   ),
                                 ),
                           isLoadingMore
@@ -408,7 +408,7 @@ class _CatatanScreenState extends State<CatatanScreen>
                                   itemCount: searchNotes.length,
                                   itemBuilder: (ctx, idx) => Container(
                                     margin: EdgeInsets.only(bottom: 10),
-                                    child: NoteCard(data: searchNotes[idx]),
+                                    child: DiskusiCard(data: searchNotes[idx]),
                                   ),
                                 ),
                           isLoadingMoreSearch
@@ -444,11 +444,11 @@ class TextTitle extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 15),
       alignment: Alignment.centerLeft,
       child: Text(
-        'Catatan Terbaru',
+        'Diskusi Terbaru',
         textAlign: TextAlign.left,
         style: GoogleFonts.poppins(
           fontSize: 18,
-          color: Color(0xFFFA694C),
+          color: Colors.purple[700],
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -469,23 +469,24 @@ class Header extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 15),
       color: Colors.white,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          Expanded(
+            child: Image.asset(
+              'assets/images/diskusi_illustration.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+          SizedBox(width: 5),
           Container(
             width: (MediaQuery.of(context).size.width * .55) - 15 - 5,
             child: Text(
-              'Bagikan Catatanmu Disini !',
+              'Diskusikan PR-mu Disini!!',
               style: GoogleFonts.poppins(
                 fontSize: 17,
                 fontWeight: FontWeight.w500,
                 color: Color(0xFF3F3737),
               ),
-            ),
-          ),
-          SizedBox(width: 5),
-          Expanded(
-            child: Image.asset(
-              'assets/images/catatan_illustration.png',
             ),
           ),
         ],

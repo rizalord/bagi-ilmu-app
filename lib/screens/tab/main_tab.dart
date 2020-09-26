@@ -8,10 +8,12 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:unord/blocs/search_catatan_bloc.dart';
+import 'package:unord/blocs/search_diskusi_bloc.dart';
 import 'package:unord/blocs/tab_bloc.dart';
 import 'package:unord/blocs/user_bloc.dart';
 import 'package:unord/data/constants.dart';
 import 'package:unord/screens/tab/catatan_screen.dart';
+import 'package:unord/screens/tab/diskusi_screen.dart';
 import 'package:unord/screens/tab/home_screen.dart';
 import 'package:unord/services/auth_service.dart';
 
@@ -25,13 +27,14 @@ class _MainTabState extends State<MainTab> {
   TextEditingController catatanTextController = TextEditingController();
   TextEditingController diskusiTextController = TextEditingController();
   Timer _debounce;
-  String queryCatatan = "";
+  String queryCatatan = "", queryDiskusi = "";
   int _debouncetime = 500;
   int initialPage = 0;
 
   @override
   void initState() {
     catatanTextController.addListener(onSearchCatatanChanged);
+    diskusiTextController.addListener(onSearchDiskusiChanged);
     super.initState();
   }
 
@@ -46,6 +49,21 @@ class _MainTabState extends State<MainTab> {
     });
   }
 
+  void onSearchDiskusiChanged() {
+    setState(() {
+      queryDiskusi = diskusiTextController.text.trim();
+    });
+
+    if (_debounce?.isActive ?? false) _debounce.cancel();
+    _debounce = Timer(Duration(milliseconds: _debouncetime), () {
+      performSearchDiskusi(diskusiTextController.text);
+    });
+  }
+
+  performSearchDiskusi(String query) {
+    Modular.get<SearchDiskusiBloc>().add(query);
+  }
+
   performSearchCatatan(String query) {
     Modular.get<SearchCatatanBloc>().add(query);
   }
@@ -54,6 +72,13 @@ class _MainTabState extends State<MainTab> {
     setState(() {
       queryCatatan = '';
       catatanTextController.text = '';
+    });
+  }
+
+  clearQueryDiskusi() {
+    setState(() {
+      queryDiskusi = '';
+      diskusiTextController.text = '';
     });
   }
 
@@ -116,62 +141,117 @@ class _MainTabState extends State<MainTab> {
                   fontSize: 24,
                 ),
               )
-            : Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 10,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(
-                    500,
-                  ),
-                  border: Border.all(
-                    color: initialPage == 0
-                        ? Theme.of(context).primaryColor
-                        : initialPage == 1
-                            ? Colors.orange[700]
-                            : Colors.purple[700],
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    SizedBox(width: 5),
-                    Icon(
-                      Icons.search,
-                      size: 17,
-                      color: Color(0xFF958989),
+            : initialPage == 1
+                ? Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10,
                     ),
-                    SizedBox(width: 5),
-                    Expanded(
-                      child: TextField(
-                        controller: catatanTextController,
-                        decoration: InputDecoration(
-                          hintText: 'Cari Catatan',
-                          hintStyle: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13.5,
-                            color: Color(0xFF958989),
-                          ),
-                          contentPadding: EdgeInsets.symmetric(
-                            vertical: 6.5,
-                          ),
-                          border: InputBorder.none,
-                          isDense: true,
-                        ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(
+                        500,
+                      ),
+                      border: Border.all(
+                        color: initialPage == 0
+                            ? Theme.of(context).primaryColor
+                            : initialPage == 1
+                                ? Colors.orange[700]
+                                : Colors.purple[700],
                       ),
                     ),
-                    queryCatatan.length != 0
-                        ? GestureDetector(
-                            onTap: clearQueryCatatan,
-                            child: Icon(
-                              Icons.close,
+                    child: Row(
+                      children: [
+                        SizedBox(width: 5),
+                        Icon(
+                          Icons.search,
+                          size: 17,
+                          color: Color(0xFF958989),
+                        ),
+                        SizedBox(width: 5),
+                        Expanded(
+                          child: TextField(
+                            controller: catatanTextController,
+                            decoration: InputDecoration(
+                              hintText: 'Cari Catatan',
+                              hintStyle: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13.5,
+                                color: Color(0xFF958989),
+                              ),
+                              contentPadding: EdgeInsets.symmetric(
+                                vertical: 6.5,
+                              ),
+                              border: InputBorder.none,
+                              isDense: true,
+                            ),
+                          ),
+                        ),
+                        queryCatatan.length != 0
+                            ? GestureDetector(
+                                onTap: clearQueryCatatan,
+                                child: Icon(
+                                  Icons.close,
+                                  size: 17,
+                                  color: Color(0xFF958989),
+                                ),
+                              )
+                            : Container(),
+                      ],
+                    ),
+                  )
+                : initialPage == 2
+                    ? Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(
+                            500,
+                          ),
+                          border: Border.all(
+                            color: Colors.purple[700],
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            SizedBox(width: 5),
+                            Icon(
+                              Icons.search,
                               size: 17,
                               color: Color(0xFF958989),
                             ),
-                          )
-                        : Container(),
-                  ],
-                ),
-              ),
+                            SizedBox(width: 5),
+                            Expanded(
+                              child: TextField(
+                                controller: diskusiTextController,
+                                decoration: InputDecoration(
+                                  hintText: 'Cari Diskusi',
+                                  hintStyle: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13.5,
+                                    color: Color(0xFF958989),
+                                  ),
+                                  contentPadding: EdgeInsets.symmetric(
+                                    vertical: 6.5,
+                                  ),
+                                  border: InputBorder.none,
+                                  isDense: true,
+                                ),
+                              ),
+                            ),
+                            queryDiskusi.length != 0
+                                ? GestureDetector(
+                                    onTap: clearQueryDiskusi,
+                                    child: Icon(
+                                      Icons.close,
+                                      size: 17,
+                                      color: Color(0xFF958989),
+                                    ),
+                                  )
+                                : Container(),
+                          ],
+                        ),
+                      )
+                    : Container(),
         centerTitle: true,
         actions: [
           initialPage != 0
@@ -180,7 +260,9 @@ class _MainTabState extends State<MainTab> {
                   onPressed: () {
                     initialPage == 1
                         ? Modular.to.pushNamed('/note/upload')
-                        : null;
+                        : initialPage == 2
+                            ? Modular.to.pushNamed('/diskusi/upload')
+                            : null;
                   },
                 )
               : Container(),
@@ -321,15 +403,16 @@ class _MainTabState extends State<MainTab> {
             activeColor: Colors.orange[700],
           ),
           BottomNavyBarItem(
-              icon: Padding(
-                padding: EdgeInsets.only(left: 5),
-                child: FaIcon(
-                  FontAwesomeIcons.pencilAlt,
-                  size: 20,
-                ),
+            icon: Padding(
+              padding: EdgeInsets.only(left: 5),
+              child: FaIcon(
+                FontAwesomeIcons.pencilAlt,
+                size: 20,
               ),
-              title: Text('Diskusi PR'),
-              activeColor: Colors.purple[700]),
+            ),
+            title: Text('Diskusi PR'),
+            activeColor: Colors.purple[700],
+          ),
         ],
       ),
       body: PageView(
@@ -338,7 +421,7 @@ class _MainTabState extends State<MainTab> {
         children: [
           HomeScreen(),
           CatatanScreen(),
-          HomeScreen(),
+          DiskusiScreen(),
         ],
       ),
     );

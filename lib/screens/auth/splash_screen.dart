@@ -16,7 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   navigate() {
-    Future.delayed(Duration(seconds: 3), () async {
+    Future.delayed(Duration(seconds: 1), () async {
       if (MainService().isAuthenticated()) {
         await MainService().boot();
         MainService().registerBloc();

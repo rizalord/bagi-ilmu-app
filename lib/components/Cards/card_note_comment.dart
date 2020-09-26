@@ -96,7 +96,7 @@ class CardNoteComment extends StatelessWidget {
               bottom: 5,
             ),
             child: Text(
-              comments[idx]['text'],
+              comments[idx]['text'].trim(),
               style: GoogleFonts.poppins(
                 fontSize: 13,
               ),
