@@ -196,6 +196,7 @@ class _NoteCardState extends State<NoteCard> {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
+                      SizedBox(height: 2),
                       Flexible(
                         fit: FlexFit.loose,
                         child: Row(

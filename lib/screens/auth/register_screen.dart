@@ -19,7 +19,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final usernameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final bgPath = 'assets/images/login_screen.png';
+  final bgPath = 'assets/images/registration_screen.png';
   bool isLoading = false;
 
   @override
@@ -38,7 +38,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     String message = null;
 
     if (username.isEmpty || username.length < 5)
-      message = 'Username must at least 6 characters';
+      message = 'Name must at least 6 characters';
     else if (email.isEmpty)
       message = 'Email cannot be blank';
     else if (password.isEmpty || password.length < 8)
@@ -144,7 +144,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           maxLength: 12,
                           decoration: InputDecoration(
                             counterText: "",
-                            hintText: 'Username',
+                            hintText: 'Name',
                             hintStyle: GoogleFonts.poppins(
                               fontWeight: FontWeight.w500,
                               fontSize: 14,
