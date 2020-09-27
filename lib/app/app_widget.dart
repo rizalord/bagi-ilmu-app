@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:unord/blocs/auth_bloc.dart';
+import 'package:unord/blocs/bookmark_bloc.dart';
 import 'package:unord/blocs/education_bloc.dart';
 import 'package:unord/blocs/liked_diskusi_bloc.dart';
 import 'package:unord/blocs/liked_notes_bloc.dart';
 import 'package:unord/blocs/search_catatan_bloc.dart';
 import 'package:unord/blocs/search_diskusi_bloc.dart';
+import 'package:unord/blocs/search_video_bloc.dart';
 import 'package:unord/blocs/subject_bloc.dart';
 import 'package:unord/blocs/tab_bloc.dart';
 import 'package:unord/blocs/user_bloc.dart';
@@ -36,6 +38,10 @@ class AppWidget extends StatelessWidget {
             create: (context) => Modular.get<SubjectBloc>()),
         BlocProvider<VotedCommentBloc>(
             create: (context) => Modular.get<VotedCommentBloc>()),
+        BlocProvider<SearchVideoBloc>(
+            create: (context) => Modular.get<SearchVideoBloc>()),
+        BlocProvider<BookmarkBloc>(
+            create: (context) => Modular.get<BookmarkBloc>()),
       ],
       child: MaterialApp(
         initialRoute: "/",

@@ -81,9 +81,10 @@ class _DiskusiScreenState extends State<DiskusiScreen>
   }
 
   void retrieveAllData() async {
-    setState(() {
-      isLoading = true;
-    });
+    if (this.mounted)
+      setState(() {
+        isLoading = true;
+      });
 
     String url = 'prs?_sort=created_at:DESC';
 
@@ -92,10 +93,11 @@ class _DiskusiScreenState extends State<DiskusiScreen>
 
     Response response = await NetworkHelper().get(url);
 
-    setState(() {
-      isLoading = false;
-      notes = response.data;
-    });
+    if (this.mounted)
+      setState(() {
+        isLoading = false;
+        notes = response.data;
+      });
   }
 
   Future<void> onRefresh() async {

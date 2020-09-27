@@ -4,9 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:unord/blocs/bookmark_bloc.dart';
 import 'package:unord/blocs/liked_diskusi_bloc.dart';
 import 'package:unord/blocs/liked_notes_bloc.dart';
 import 'package:unord/data/constants.dart';
+import 'package:unord/helpers/network_helper.dart';
+import 'package:unord/helpers/widget_helper.dart';
+import 'package:unord/services/bookmark_service.dart';
 import 'package:unord/services/diskusi_service.dart';
 import 'package:unord/services/note_service.dart';
 
@@ -14,9 +18,14 @@ class DiskusiCard extends StatefulWidget {
   const DiskusiCard({
     Key key,
     this.data,
+    this.showBadge = false,
+    this.enableDelete = false,
+    this.deleteCallback,
   }) : super(key: key);
 
   final Map data;
+  final bool showBadge, enableDelete;
+  final Function deleteCallback;
 
   @override
   _DiskusiCardState createState() => _DiskusiCardState();
@@ -87,12 +96,10 @@ class _DiskusiCardState extends State<DiskusiCard> {
                           width: 33,
                           height: 33,
                           child: widget.data['user']['image'] != null
-                              ? CachedNetworkImage(
-                                  imageUrl: URLs.host
-                                          .substring(0, URLs.host.length - 1) +
+                              ? WidgetHelper.ImageLoader(
+                                  URLs.host.substring(0, URLs.host.length - 1) +
                                       widget.data['user']['image']['formats']
                                           ['thumbnail']['url'],
-                                  fit: BoxFit.cover,
                                 )
                               : Image.asset(
                                   'assets/images/default_user_icon.png',
@@ -124,6 +131,35 @@ class _DiskusiCardState extends State<DiskusiCard> {
                           ],
                         ),
                       ),
+                      BlocBuilder<BookmarkBloc, List<Map>>(
+                        builder: (_, bookmarks) {
+                          bool isBookmarked = bookmarks
+                                  .where((e) =>
+                                      e['bookmark_type']['id'] == 2 &&
+                                      e['pr'] != null)
+                                  .toList()
+                                  .where((element) =>
+                                      element['pr']['id'] == widget.data['id'])
+                                  .toList()
+                                  .length >
+                              0;
+
+                          return GestureDetector(
+                            onTap: () async => !isBookmarked
+                                ? await BookmarkService()
+                                    .bookmarkDiskusi(widget.data['id'])
+                                : await BookmarkService()
+                                    .unbookmarkDiskusi(widget.data['id']),
+                            child: Container(
+                              child: Icon(
+                                isBookmarked
+                                    ? Icons.bookmark
+                                    : Icons.bookmark_border,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -137,13 +173,12 @@ class _DiskusiCardState extends State<DiskusiCard> {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(7),
-                    child: CachedNetworkImage(
-                      imageUrl: URLs.host.substring(0, URLs.host.length - 1) +
+                    child: WidgetHelper.ImageLoader(
+                      URLs.host.substring(0, URLs.host.length - 1) +
                           (widget.data['image']['url'] != null
                               ? widget.data['image']['url']
                               : widget.data['image']['formats']['thumbnail']
                                   ['url']),
-                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
@@ -159,6 +194,8 @@ class _DiskusiCardState extends State<DiskusiCard> {
                           fontSize: 18,
                           color: Color(0xFF423838),
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       Flexible(
                         fit: FlexFit.loose,
@@ -182,6 +219,31 @@ class _DiskusiCardState extends State<DiskusiCard> {
                                 color: Color(0xFF5B5B5B),
                               ),
                             ),
+                            widget.showBadge
+                                ? Row(
+                                    children: [
+                                      SizedBox(width: 15),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 7,
+                                          vertical: 3,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.purple[700],
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Text(
+                                          'Diskusi',
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 10,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : Container(),
                           ],
                         ),
                       )
@@ -234,6 +296,53 @@ class _DiskusiCardState extends State<DiskusiCard> {
                           color: Colors.black,
                         ),
                       ),
+                      widget.enableDelete
+                          ? Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (_) => AlertDialog(
+                                      title: Text(
+                                          'Apa anda yakin untuk menghapus?'),
+                                      actions: [
+                                        FlatButton(
+                                          onPressed: () => Modular.to.pop(),
+                                          child: Text('Tidak'),
+                                        ),
+                                        FlatButton(
+                                          onPressed: () async {
+                                            await NetworkHelper().delete(
+                                              'prs/' +
+                                                  widget.data['id'].toString(),
+                                            );
+                                            Modular.to.pop();
+                                            Future.delayed(
+                                                Duration(milliseconds: 500),
+                                                () {
+                                              widget.deleteCallback();
+                                            });
+                                          },
+                                          child: Text('Ya'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.only(right: 10),
+                                  child: Text(
+                                    'Hapus',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 12,
+                                      color: Colors.black,
+                                    ),
+                                    textAlign: TextAlign.right,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Container(),
                     ],
                   ),
                 )

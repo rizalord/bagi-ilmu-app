@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:unord/blocs/voted_comment_bloc.dart';
 import 'package:unord/data/constants.dart';
+import 'package:unord/helpers/widget_helper.dart';
 import 'package:unord/services/diskusi_service.dart';
 
 class CardDiskusiComment extends StatefulWidget {
@@ -142,12 +143,10 @@ class _CardDiskusiCommentState extends State<CardDiskusiComment> {
                     width: 33,
                     height: 33,
                     child: widget.comments[widget.idx]['user']['image'] != null
-                        ? CachedNetworkImage(
-                            imageUrl:
-                                URLs.host.substring(0, URLs.host.length - 1) +
-                                    widget.comments[widget.idx]['user']['image']
-                                        ['formats']['thumbnail']['url'],
-                            fit: BoxFit.cover,
+                        ? WidgetHelper.ImageLoader(
+                            URLs.host.substring(0, URLs.host.length - 1) +
+                                widget.comments[widget.idx]['user']['image']
+                                    ['formats']['thumbnail']['url'],
                           )
                         : Image.asset(
                             'assets/images/default_user_icon.png',

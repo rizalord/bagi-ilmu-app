@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,6 +18,12 @@ class _LoginScreenState extends State<LoginScreen> {
   final passwordController = TextEditingController();
   final bgPath = 'assets/images/login_screen.png';
   bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setEnabledSystemUIOverlays([]);
+  }
 
   // To Submit Data
   void submit() async {
@@ -77,73 +84,15 @@ class _LoginScreenState extends State<LoginScreen> {
           Positioned.fill(
             left: 0,
             right: 0,
-            top: 0,
+            top: MediaQuery.of(context).padding.top,
             bottom: 0,
-            child: Image.asset(bgPath, fit: BoxFit.cover),
+            child: Image.asset(bgPath, fit: BoxFit.fill),
           ),
           Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(
-                  margin: EdgeInsets.only(bottom: 40),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'U',
-                        style: GoogleFonts.quicksand(
-                          color: Color(0xFFD37348),
-                          fontSize: 48,
-                        ),
-                      ),
-                      SizedBox(width: 5),
-                      Text(
-                        'N',
-                        style: GoogleFonts.quicksand(
-                          color: Color(0xFFD37348),
-                          fontSize: 48,
-                        ),
-                      ),
-                      SizedBox(width: 5),
-                      Flexible(
-                        child: Column(
-                          children: [
-                            Text(
-                              'o',
-                              style: GoogleFonts.quicksand(
-                                color: Color(0xFFD37348),
-                                fontSize: 48,
-                              ),
-                            ),
-                            Container(
-                              width: 24,
-                              height: 2,
-                              color: Color(0xFFD37348).withOpacity(.7),
-                            )
-                          ],
-                        ),
-                      ),
-                      SizedBox(width: 5),
-                      Text(
-                        'r',
-                        style: GoogleFonts.quicksand(
-                          color: Color(0xFFD37348),
-                          fontSize: 48,
-                        ),
-                      ),
-                      SizedBox(width: 5),
-                      Text(
-                        'd',
-                        style: GoogleFonts.quicksand(
-                          color: Color(0xFFD37348),
-                          fontSize: 48,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -297,37 +246,20 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(81),
-                    color: Color(0xFFF17C64),
-                  ),
-                  child: Material(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(81),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(81),
-                      onTap: bottomNavigate,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(81),
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 34,
-                          vertical: 8,
-                        ),
-                        child: Text(
-                          'Sign Up',
-                          style: GoogleFonts.poppins(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
+                InkWell(
+                  onTap: bottomNavigate,
+                  child: Text(
+                    'Sign Up',
+                    style: GoogleFonts.poppins(
+                      color: Color(0xFFEF2763),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * .1,
+                )
               ],
             ),
           ),

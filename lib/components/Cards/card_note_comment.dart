@@ -3,21 +3,28 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:unord/data/constants.dart';
+import 'package:unord/helpers/widget_helper.dart';
 
 class CardNoteComment extends StatelessWidget {
   const CardNoteComment({
     Key key,
     @required this.comments,
     @required this.idx,
+    this.forVideo = false,
   }) : super(key: key);
 
   final List comments;
   final int idx;
+  final bool forVideo;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: 20, right: 20, bottom: 10),
+      margin: EdgeInsets.only(
+        left: forVideo ? 0 : 20,
+        right: forVideo ? 0 : 20,
+        bottom: 10,
+      ),
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
@@ -44,12 +51,10 @@ class CardNoteComment extends StatelessWidget {
                     width: 33,
                     height: 33,
                     child: comments[idx]['user']['image'] != null
-                        ? CachedNetworkImage(
-                            imageUrl:
-                                URLs.host.substring(0, URLs.host.length - 1) +
-                                    comments[idx]['user']['image']['formats']
-                                        ['thumbnail']['url'],
-                            fit: BoxFit.cover,
+                        ? WidgetHelper.ImageLoader(
+                            URLs.host.substring(0, URLs.host.length - 1) +
+                                comments[idx]['user']['image']['formats']
+                                    ['thumbnail']['url'],
                           )
                         : Image.asset(
                             'assets/images/default_user_icon.png',

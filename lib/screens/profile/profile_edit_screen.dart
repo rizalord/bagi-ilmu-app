@@ -14,6 +14,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:unord/blocs/tab_bloc.dart';
 import 'package:unord/data/constants.dart';
 import 'package:unord/helpers/network_helper.dart';
+import 'package:unord/helpers/widget_helper.dart';
 import 'package:unord/services/auth_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -82,7 +83,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           ? Theme.of(context).primaryColor
                           : _tabIndex == 1
                               ? Colors.orange[700]
-                              : Colors.purple[700],
+                              : _tabIndex == 2
+                                  ? Colors.purple[700]
+                                  : Color(0xFFE95908),
                     ),
                   ),
                 ),
@@ -136,7 +139,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ? Theme.of(context).primaryColor
             : _tabIndex == 1
                 ? Colors.orange[700]
-                : Colors.purple[700],
+                : _tabIndex == 2
+                    ? Colors.purple[700]
+                    : Color(0xFFE95908),
         toolbarWidgetColor: Colors.white,
         initAspectRatio: CropAspectRatioPreset.square,
         lockAspectRatio: true,
@@ -281,18 +286,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                           ? Image.file(pickedImage)
                                           : userData != null
                                               ? userData['image'] != null
-                                                  ? CachedNetworkImage(
-                                                      imageUrl: URLs.host
-                                                              .substring(
-                                                                  0,
-                                                                  URLs.host
-                                                                          .length -
-                                                                      1) +
+                                                  ? WidgetHelper.ImageLoader(
+                                                      URLs.host.substring(
+                                                              0,
+                                                              URLs.host.length -
+                                                                  1) +
                                                           userData['image'][
                                                                       'formats']
                                                                   ['thumbnail']
                                                               ['url'],
-                                                      fit: BoxFit.cover,
                                                     )
                                                   : Image.asset(
                                                       'assets/images/default_user_icon.png',
@@ -314,7 +316,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             ? Theme.of(context).primaryColor
                                             : tabIndex == 1
                                                 ? Colors.orange[700]
-                                                : Colors.purple[700],
+                                                : tabIndex == 2
+                                                    ? Colors.purple[700]
+                                                    : Color(0xFFE95908),
                                         borderRadius: BorderRadius.circular(
                                           MediaQuery.of(context).size.width *
                                               .3,
@@ -358,21 +362,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             ? Theme.of(context).primaryColor
                                             : tabIndex == 1
                                                 ? Colors.orange[700]
-                                                : Colors.purple[700],
+                                                : tabIndex == 2
+                                                    ? Colors.purple[700]
+                                                    : Color(0xFFE95908),
                                       ),
                                       enabledBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                          color: Colors.grey.withOpacity(0),
+                                          color:
+                                              Color(0xFF958F8F).withOpacity(1),
                                         ),
                                       ),
                                       focusedBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                          color: Colors.grey.withOpacity(0),
+                                          color:
+                                              Color(0xFF958F8F).withOpacity(1),
                                         ),
                                       ),
                                       border: UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                          color: Colors.grey.withOpacity(0),
+                                          color:
+                                              Color(0xFF958F8F).withOpacity(1),
                                         ),
                                       ),
                                     ),
@@ -387,21 +396,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             ? Theme.of(context).primaryColor
                                             : tabIndex == 1
                                                 ? Colors.orange[700]
-                                                : Colors.purple[700],
+                                                : tabIndex == 2
+                                                    ? Colors.purple[700]
+                                                    : Color(0xFFE95908),
                                       ),
                                       enabledBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                          color: Colors.grey.withOpacity(0),
+                                          color:
+                                              Color(0xFF958F8F).withOpacity(1),
                                         ),
                                       ),
                                       focusedBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                          color: Colors.grey.withOpacity(0),
+                                          color:
+                                              Color(0xFF958F8F).withOpacity(1),
                                         ),
                                       ),
                                       border: UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                          color: Colors.grey.withOpacity(0),
+                                          color:
+                                              Color(0xFF958F8F).withOpacity(1),
                                         ),
                                       ),
                                     ),
@@ -416,21 +430,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             ? Theme.of(context).primaryColor
                                             : tabIndex == 1
                                                 ? Colors.orange[700]
-                                                : Colors.purple[700],
+                                                : tabIndex == 2
+                                                    ? Colors.purple[700]
+                                                    : Color(0xFFE95908),
                                       ),
                                       enabledBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                          color: Colors.grey.withOpacity(0),
+                                          color:
+                                              Color(0xFF958F8F).withOpacity(1),
                                         ),
                                       ),
                                       focusedBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                          color: Colors.grey.withOpacity(0),
+                                          color:
+                                              Color(0xFF958F8F).withOpacity(1),
                                         ),
                                       ),
                                       border: UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                          color: Colors.grey.withOpacity(0),
+                                          color:
+                                              Color(0xFF958F8F).withOpacity(1),
                                         ),
                                       ),
                                     ),
@@ -445,21 +464,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             ? Theme.of(context).primaryColor
                                             : tabIndex == 1
                                                 ? Colors.orange[700]
-                                                : Colors.purple[700],
+                                                : tabIndex == 2
+                                                    ? Colors.purple[700]
+                                                    : Color(0xFFE95908),
                                       ),
                                       enabledBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                          color: Colors.grey.withOpacity(0),
+                                          color:
+                                              Color(0xFF958F8F).withOpacity(1),
                                         ),
                                       ),
                                       focusedBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                          color: Colors.grey.withOpacity(0),
+                                          color:
+                                              Color(0xFF958F8F).withOpacity(1),
                                         ),
                                       ),
                                       border: UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                          color: Colors.grey.withOpacity(0),
+                                          color:
+                                              Color(0xFF958F8F).withOpacity(1),
                                         ),
                                       ),
                                     ),
@@ -474,21 +498,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             ? Theme.of(context).primaryColor
                                             : tabIndex == 1
                                                 ? Colors.orange[700]
-                                                : Colors.purple[700],
+                                                : tabIndex == 2
+                                                    ? Colors.purple[700]
+                                                    : Color(0xFFE95908),
                                       ),
                                       enabledBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                          color: Colors.grey.withOpacity(0),
+                                          color:
+                                              Color(0xFF958F8F).withOpacity(1),
                                         ),
                                       ),
                                       focusedBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                          color: Colors.grey.withOpacity(0),
+                                          color:
+                                              Color(0xFF958F8F).withOpacity(1),
                                         ),
                                       ),
                                       border: UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                          color: Colors.grey.withOpacity(0),
+                                          color:
+                                              Color(0xFF958F8F).withOpacity(1),
                                         ),
                                       ),
                                     ),
@@ -510,7 +539,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 ? Theme.of(context).primaryColor
                                 : tabIndex == 1
                                     ? Colors.orange[700]
-                                    : Colors.purple[700],
+                                    : tabIndex == 2
+                                        ? Colors.purple[700]
+                                        : Color(0xFFE95908),
                             borderRadius: BorderRadius.circular(
                               MediaQuery.of(context).size.width * .8,
                             ),

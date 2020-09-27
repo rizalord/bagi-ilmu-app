@@ -7,12 +7,14 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:unord/blocs/bookmark_bloc.dart';
 import 'package:unord/blocs/liked_diskusi_bloc.dart';
 import 'package:unord/blocs/liked_notes_bloc.dart';
 import 'package:unord/components/Cards/card_diskusi_comment.dart';
 import 'package:unord/components/Cards/card_note_comment.dart';
 import 'package:unord/data/constants.dart';
 import 'package:unord/helpers/network_helper.dart';
+import 'package:unord/services/bookmark_service.dart';
 import 'package:unord/services/diskusi_service.dart';
 import 'package:unord/services/note_service.dart';
 import 'package:zoom_widget/zoom_widget.dart';
@@ -76,10 +78,11 @@ class _DetailDiskusiScreenState extends State<DetailDiskusiScreen>
     Response response =
         await NetworkHelper().get('prs/' + widget.id.toString());
 
-    setState(() {
-      detail = response.data;
-      likes = response.data['pr_likes'].length;
-    });
+    if (this.mounted)
+      setState(() {
+        detail = response.data;
+        likes = response.data['pr_likes'].length;
+      });
 
     retrieveAllComments();
 
@@ -87,21 +90,23 @@ class _DetailDiskusiScreenState extends State<DetailDiskusiScreen>
   }
 
   retrieveAllComments() async {
-    setState(() {
-      start = 0;
-      isReached = false;
-      isLoading = true;
-    });
+    if (this.mounted)
+      setState(() {
+        start = 0;
+        isReached = false;
+        isLoading = true;
+      });
 
     String url =
         'pr-comments?_limit=$perPage&_start=$start&_sort=correct:DESC&pr.id=${widget.id}';
 
     Response response = await NetworkHelper().get(url);
 
-    setState(() {
-      isLoading = false;
-      comments = response.data.cast<Map>();
-    });
+    if (this.mounted)
+      setState(() {
+        isLoading = false;
+        comments = response.data.cast<Map>();
+      });
   }
 
   void toggleLike(List<Map> listLiked) async {
@@ -303,6 +308,39 @@ class _DetailDiskusiScreenState extends State<DetailDiskusiScreen>
                                             ),
                                           ],
                                         ),
+                                      ),
+                                      BlocBuilder<BookmarkBloc, List<Map>>(
+                                        builder: (_, bookmarks) {
+                                          bool isBookmarked = bookmarks
+                                                  .where((e) =>
+                                                      e['bookmark_type']
+                                                              ['id'] ==
+                                                          2 &&
+                                                      e['pr'] != null)
+                                                  .toList()
+                                                  .where((element) =>
+                                                      element['pr']['id'] ==
+                                                      widget.id)
+                                                  .toList()
+                                                  .length >
+                                              0;
+
+                                          return GestureDetector(
+                                            onTap: () async => !isBookmarked
+                                                ? await BookmarkService()
+                                                    .bookmarkDiskusi(widget.id)
+                                                : await BookmarkService()
+                                                    .unbookmarkDiskusi(
+                                                        widget.id),
+                                            child: Container(
+                                              child: Icon(
+                                                isBookmarked
+                                                    ? Icons.bookmark
+                                                    : Icons.bookmark_border,
+                                              ),
+                                            ),
+                                          );
+                                        },
                                       ),
                                     ],
                                   ),

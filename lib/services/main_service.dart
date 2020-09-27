@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:unord/blocs/auth_bloc.dart';
+import 'package:unord/blocs/bookmark_bloc.dart';
 import 'package:unord/blocs/education_bloc.dart';
 import 'package:unord/blocs/liked_diskusi_bloc.dart';
 import 'package:unord/blocs/liked_notes_bloc.dart';
@@ -17,6 +18,17 @@ class MainService extends DatabaseHelper {
     await getVotedComment();
     await getEducations();
     await getSubjects();
+    await getBookmarks();
+  }
+
+  Future<void> getBookmarks() async {
+    var userId = box.get('user_data')['id'];
+    Response response = await NetworkHelper().get('bookmarks?user.id=$userId');
+
+    List<Map> data = response.data.map((e) => e).toList().cast<Map>();
+
+    box.put('bookmarks', data);
+    Modular.get<BookmarkBloc>().add(data);
   }
 
   Future<void> getVotedComment() async {
@@ -25,6 +37,7 @@ class MainService extends DatabaseHelper {
         await NetworkHelper().get('pr-vote-comments?user.id=$userId');
 
     List<Map> data = response.data
+        .where((e) => e['pr_comment'] != null)
         .map(
           (e) => {
             'id_comment': e['pr_comment']['id'],
@@ -76,6 +89,7 @@ class MainService extends DatabaseHelper {
     Response response = await NetworkHelper().get('note-likes?user.id=$userId');
 
     List<Map> data = response.data
+        .where((e) => e['note'] != null)
         .map(
           (e) => {
             'id_catatan': e['note']['id'],
@@ -94,6 +108,7 @@ class MainService extends DatabaseHelper {
     Response response = await NetworkHelper().get('pr-likes?user.id=$userId');
 
     List<Map> data = response.data
+        .where((e) => e['pr'] != null)
         .map(
           (e) => {
             'id_diskusi': e['pr']['id'],
@@ -124,12 +139,14 @@ class MainService extends DatabaseHelper {
           box.get('liked_diskusi', defaultValue: []).cast<Map>();
       List<Map> votedComments =
           box.get('voted_comments', defaultValue: []).cast<Map>();
+      List<Map> bookmarks = box.get('bookmarks', defaultValue: []).cast<Map>();
 
       Modular.get<AuthBloc>().add(token);
       Modular.get<UserBloc>().add(userData);
       Modular.get<LikedNotesBloc>().add(likedNotes);
       Modular.get<LikedDiskusiBloc>().add(likedDiskusi);
       Modular.get<VotedCommentBloc>().add(votedComments);
+      Modular.get<BookmarkBloc>().add(bookmarks);
     } catch (e) {
       return false;
     }

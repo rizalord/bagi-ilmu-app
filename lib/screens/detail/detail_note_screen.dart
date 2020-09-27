@@ -6,10 +6,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:unord/blocs/bookmark_bloc.dart';
 import 'package:unord/blocs/liked_notes_bloc.dart';
 import 'package:unord/components/Cards/card_note_comment.dart';
 import 'package:unord/data/constants.dart';
 import 'package:unord/helpers/network_helper.dart';
+import 'package:unord/services/bookmark_service.dart';
 import 'package:unord/services/note_service.dart';
 import 'package:zoom_widget/zoom_widget.dart';
 
@@ -251,6 +253,38 @@ class _DetailNoteScreenState extends State<DetailNoteScreen>
                                             ),
                                           ],
                                         ),
+                                      ),
+                                      BlocBuilder<BookmarkBloc, List<Map>>(
+                                        builder: (_, bookmarks) {
+                                          bool isBookmarked = bookmarks
+                                                  .where((e) =>
+                                                      e['bookmark_type']
+                                                              ['id'] ==
+                                                          1 &&
+                                                      e['note'] != null)
+                                                  .toList()
+                                                  .where((element) =>
+                                                      element['note']['id'] ==
+                                                      widget.id)
+                                                  .toList()
+                                                  .length >
+                                              0;
+
+                                          return GestureDetector(
+                                            onTap: () async => !isBookmarked
+                                                ? await BookmarkService()
+                                                    .bookmarkNote(widget.id)
+                                                : await BookmarkService()
+                                                    .unbookmarkNote(widget.id),
+                                            child: Container(
+                                              child: Icon(
+                                                isBookmarked
+                                                    ? Icons.bookmark
+                                                    : Icons.bookmark_border,
+                                              ),
+                                            ),
+                                          );
+                                        },
                                       ),
                                     ],
                                   ),

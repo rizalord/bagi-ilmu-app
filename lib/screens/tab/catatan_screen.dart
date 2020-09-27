@@ -43,23 +43,26 @@ class _CatatanScreenState extends State<CatatanScreen>
     if (!isReached) {
       if (query.length == 0) {
         start += perPage;
-        setState(() {
-          isLoadingMore = true;
-        });
+        if (this.mounted)
+          setState(() {
+            isLoadingMore = true;
+          });
 
         Response response = await NetworkHelper()
             .get('notes?_limit=$perPage&_start=$start&_sort=created_at:DESC');
 
-        setState(() {
-          isLoadingMore = false;
-          isReached = response.data.length < perPage;
-          notes.addAll(response.data);
-        });
+        if (this.mounted)
+          setState(() {
+            isLoadingMore = false;
+            isReached = response.data.length < perPage;
+            notes.addAll(response.data);
+          });
       } else {
         startSearch += perPage;
-        setState(() {
-          isLoadingMoreSearch = true;
-        });
+        if (this.mounted)
+          setState(() {
+            isLoadingMoreSearch = true;
+          });
 
         String url =
             'notes?_limit=$perPage&_start=$startSearch&_sort=created_at:DESC&title_contains=$query';
@@ -69,11 +72,12 @@ class _CatatanScreenState extends State<CatatanScreen>
 
         Response response = await NetworkHelper().get(url);
 
-        setState(() {
-          isLoadingMoreSearch = false;
-          isReached = response.data.length < perPage;
-          searchNotes.addAll(response.data);
-        });
+        if (this.mounted)
+          setState(() {
+            isLoadingMoreSearch = false;
+            isReached = response.data.length < perPage;
+            searchNotes.addAll(response.data);
+          });
       }
     }
   }
