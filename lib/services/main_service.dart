@@ -10,6 +10,7 @@ import 'package:unord/blocs/user_bloc.dart';
 import 'package:unord/blocs/voted_comment_bloc.dart';
 import 'package:unord/helpers/database_helper.dart';
 import 'package:unord/helpers/network_helper.dart';
+import 'package:unord/services/auth_service.dart';
 
 class MainService extends DatabaseHelper {
   Future<void> boot() async {
@@ -127,6 +128,14 @@ class MainService extends DatabaseHelper {
     var userData = box.get('user_data', defaultValue: null);
 
     return token != null && userData != null;
+  }
+
+  Future<bool> isExist() async {
+    Response response = await NetworkHelper().get('users/me');
+
+    if (response.data['statusCode'] != null) await AuthService().logout();
+
+    return response.data['statusCode'] == null;
   }
 
   bool registerBloc() {

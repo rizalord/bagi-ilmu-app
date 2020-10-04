@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:unord/blocs/bookmark_bloc.dart';
@@ -60,6 +62,24 @@ class _DiskusiCardState extends State<DiskusiCard> {
     }
   }
 
+  Future<bool> checkIsExist() async {
+    Response response =
+        await NetworkHelper().get('/prs/' + widget.data['id'].toString());
+
+    if (response.data.runtimeType == String) {
+      Fluttertoast.showToast(
+          msg: 'Diskusi tidak ditemukan',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black.withOpacity(.7),
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+
+    return response.data.runtimeType != String;
+  }
+
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -76,10 +96,12 @@ class _DiskusiCardState extends State<DiskusiCard> {
         ),
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
-          onTap: () {
-            Modular.to.pushNamed('/diskusi/detail', arguments: {
-              'id': widget.data['id'],
-            });
+          onTap: () async {
+            if (await checkIsExist()) {
+              Modular.to.pushNamed('/diskusi/detail', arguments: {
+                'id': widget.data['id'],
+              });
+            }
           },
           child: Container(
             margin: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -145,11 +167,15 @@ class _DiskusiCardState extends State<DiskusiCard> {
                               0;
 
                           return GestureDetector(
-                            onTap: () async => !isBookmarked
-                                ? await BookmarkService()
-                                    .bookmarkDiskusi(widget.data['id'])
-                                : await BookmarkService()
-                                    .unbookmarkDiskusi(widget.data['id']),
+                            onTap: () async {
+                              if (await checkIsExist()) {
+                                !isBookmarked
+                                    ? await BookmarkService()
+                                        .bookmarkDiskusi(widget.data['id'])
+                                    : await BookmarkService()
+                                        .unbookmarkDiskusi(widget.data['id']);
+                              }
+                            },
                             child: Container(
                               child: Icon(
                                 isBookmarked
@@ -173,13 +199,18 @@ class _DiskusiCardState extends State<DiskusiCard> {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(7),
-                    child: WidgetHelper.ImageLoader(
-                      URLs.host.substring(0, URLs.host.length - 1) +
-                          (widget.data['image']['url'] != null
-                              ? widget.data['image']['url']
-                              : widget.data['image']['formats']['thumbnail']
-                                  ['url']),
-                    ),
+                    child: widget.data['image'] == null
+                        ? Image.asset(
+                            'assets/images/404.jpg',
+                            fit: BoxFit.cover,
+                          )
+                        : WidgetHelper.ImageLoader(
+                            URLs.host.substring(0, URLs.host.length - 1) +
+                                (widget.data['image']['url'] != null
+                                    ? widget.data['image']['url']
+                                    : widget.data['image']['formats']
+                                        ['thumbnail']['url']),
+                          ),
                   ),
                 ),
                 SizedBox(height: 10),
@@ -257,8 +288,8 @@ class _DiskusiCardState extends State<DiskusiCard> {
                     children: [
                       BlocBuilder<LikedDiskusiBloc, List<Map>>(
                         builder: (_, listLiked) => GestureDetector(
-                          onTap: () {
-                            toggleLike(listLiked);
+                          onTap: () async {
+                            if (await checkIsExist()) toggleLike(listLiked);
                           },
                           child: Container(
                             child: Row(
@@ -296,53 +327,53 @@ class _DiskusiCardState extends State<DiskusiCard> {
                           color: Colors.black,
                         ),
                       ),
-                      widget.enableDelete
-                          ? Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (_) => AlertDialog(
-                                      title: Text(
-                                          'Apa anda yakin untuk menghapus?'),
-                                      actions: [
-                                        FlatButton(
-                                          onPressed: () => Modular.to.pop(),
-                                          child: Text('Tidak'),
-                                        ),
-                                        FlatButton(
-                                          onPressed: () async {
-                                            await NetworkHelper().delete(
-                                              'prs/' +
-                                                  widget.data['id'].toString(),
-                                            );
-                                            Modular.to.pop();
-                                            Future.delayed(
-                                                Duration(milliseconds: 500),
-                                                () {
-                                              widget.deleteCallback();
-                                            });
-                                          },
-                                          child: Text('Ya'),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.only(right: 10),
-                                  child: Text(
-                                    'Hapus',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 12,
-                                      color: Colors.black,
-                                    ),
-                                    textAlign: TextAlign.right,
-                                  ),
-                                ),
-                              ),
-                            )
-                          : Container(),
+                      // widget.enableDelete
+                      //     ? Expanded(
+                      //         child: GestureDetector(
+                      //           onTap: () {
+                      //             showDialog(
+                      //               context: context,
+                      //               builder: (_) => AlertDialog(
+                      //                 title: Text(
+                      //                     'Apa anda yakin untuk menghapus?'),
+                      //                 actions: [
+                      //                   FlatButton(
+                      //                     onPressed: () => Modular.to.pop(),
+                      //                     child: Text('Tidak'),
+                      //                   ),
+                      //                   FlatButton(
+                      //                     onPressed: () async {
+                      //                       await NetworkHelper().delete(
+                      //                         'prs/' +
+                      //                             widget.data['id'].toString(),
+                      //                       );
+                      //                       Modular.to.pop();
+                      //                       Future.delayed(
+                      //                           Duration(milliseconds: 500),
+                      //                           () {
+                      //                         widget.deleteCallback();
+                      //                       });
+                      //                     },
+                      //                     child: Text('Ya'),
+                      //                   ),
+                      //                 ],
+                      //               ),
+                      //             );
+                      //           },
+                      //           child: Container(
+                      //             margin: EdgeInsets.only(right: 10),
+                      //             child: Text(
+                      //               'Hapus',
+                      //               style: GoogleFonts.poppins(
+                      //                 fontSize: 12,
+                      //                 color: Colors.black,
+                      //               ),
+                      //               textAlign: TextAlign.right,
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       )
+                      //     : Container(),
                     ],
                   ),
                 )

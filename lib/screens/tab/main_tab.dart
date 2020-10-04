@@ -133,6 +133,8 @@ class _MainTabState extends State<MainTab> {
           FlatButton(
             onPressed: () async {
               if (await AuthService().logout()) {
+                Modular.to.pop();
+                Modular.to.pop();
                 Modular.to.pushReplacementNamed('/login');
               }
             },

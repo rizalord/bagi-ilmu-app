@@ -260,7 +260,11 @@ class _DetailVideoScreenState extends State<DetailVideoScreen>
                                           ),
                                           SizedBox(width: 15),
                                           Text(
-                                            comments.length.toString(),
+                                            comments
+                                                .where((e) => e['user'] != null)
+                                                .toList()
+                                                .length
+                                                .toString(),
                                             style: GoogleFonts.poppins(
                                               fontSize: 13,
                                               color: Color(0xFF5B5959),

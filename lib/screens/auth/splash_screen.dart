@@ -20,9 +20,13 @@ class _SplashScreenState extends State<SplashScreen> {
   navigate() {
     Future.delayed(Duration(seconds: 1), () async {
       if (MainService().isAuthenticated()) {
-        await MainService().boot();
-        MainService().registerBloc();
-        Modular.to.pushReplacementNamed('/general');
+        if (await MainService().isExist()) {
+          await MainService().boot();
+          MainService().registerBloc();
+          Modular.to.pushReplacementNamed('/general');
+        } else {
+          Modular.to.pushReplacementNamed('/login');
+        }
       } else {
         Modular.to.pushReplacementNamed('/login');
       }

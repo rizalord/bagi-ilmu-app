@@ -223,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   @override
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => false;
 }
 
 class Header extends StatelessWidget {

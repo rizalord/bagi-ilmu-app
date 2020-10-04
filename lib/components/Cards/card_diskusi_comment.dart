@@ -114,255 +114,259 @@ class _CardDiskusiCommentState extends State<CardDiskusiComment> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(left: 20, right: 20, bottom: 10),
-      width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
-        color: Color(0xFFFBFBFB),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          width: 1,
-          color: Color(0xFFCACACA),
-        ),
-      ),
-      padding: EdgeInsets.only(
-        left: 10,
-        right: 10,
-        top: 10,
-        bottom: 12,
-      ),
-      child: Column(
-        children: [
-          Container(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(33),
-                  child: Container(
-                    width: 33,
-                    height: 33,
-                    child: widget.comments[widget.idx]['user']['image'] != null
-                        ? WidgetHelper.ImageLoader(
-                            URLs.host.substring(0, URLs.host.length - 1) +
-                                widget.comments[widget.idx]['user']['image']
-                                    ['formats']['thumbnail']['url'],
-                          )
-                        : Image.asset(
-                            'assets/images/default_user_icon.png',
-                            fit: BoxFit.cover,
-                          ),
-                  ),
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    widget.comments[widget.idx]['user']['username'],
-                    style: GoogleFonts.poppins(
-                      fontSize: 15.5,
-                      color: Color(0xFF3C3C3C),
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                widget.isAdmin == true && isTagged == false
-                    ? Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 7,
-                          vertical: 4.5,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Color(0xFFDFDADA),
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        child: GestureDetector(
-                          onTap: () {
-                            widget.callback(widget.idx);
-                          },
-                          child: Row(
-                            children: [
-                              Text(
-                                'Tandai Benar',
-                                style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 12,
-                                  color: Color(0xFF231C1C),
-                                ),
-                              ),
-                              SizedBox(width: 3.8),
-                              Icon(
-                                Icons.check,
-                                color: Colors.green,
-                                size: 16,
-                              )
-                            ],
-                          ),
-                        ),
-                      )
-                    : isTagged == true &&
-                            widget.comments[widget.idx]['correct'] == true
-                        ? Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 4.5,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.purple[700],
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            child: Row(
-                              children: [
-                                Text(
-                                  'Benar',
-                                  style: GoogleFonts.poppins(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 12,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                SizedBox(width: 3.8),
-                                Icon(
-                                  Icons.check,
-                                  color: Colors.greenAccent,
-                                  size: 16,
-                                )
-                              ],
-                            ),
-                          )
-                        : Container(),
-              ],
-            ),
-          ),
-          Container(
+    return widget.comments[widget.idx]['user'] != null
+        ? Container(
+            margin: EdgeInsets.only(left: 20, right: 20, bottom: 10),
             width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.only(
-              top: 8,
-              bottom: 5,
+            decoration: BoxDecoration(
+              color: Color(0xFFFBFBFB),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                width: 1,
+                color: Color(0xFFCACACA),
+              ),
             ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+            padding: EdgeInsets.only(
+              left: 10,
+              right: 10,
+              top: 10,
+              bottom: 12,
+            ),
+            child: Column(
               children: [
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  child: Column(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      BlocBuilder<VotedCommentBloc, List<Map>>(
-                        builder: (_, votesBloc) {
-                          bool isVoted = votesBloc
-                                  .where((e) =>
-                                      e['id_comment'] ==
-                                      widget.comments[widget.idx]['id'])
-                                  .toList()
-                                  .length >
-                              0;
-
-                          if (isVoted) {
-                            alreadyVote = votesBloc
-                                .where((e) =>
-                                    e['id_comment'] ==
-                                    widget.comments[widget.idx]['id'])
-                                .toList()
-                                .first['is_upvoted'];
-                          } else {
-                            alreadyVote = null;
-                          }
-
-                          if (isVoted) {
-                            Map data = votesBloc
-                                .where((e) =>
-                                    e['id_comment'] ==
-                                    widget.comments[widget.idx]['id'])
-                                .toList()
-                                .first;
-
-                            if (data['is_upvoted'] == true) {
-                              alreadyVote = true;
-                              return FaIcon(
-                                FontAwesomeIcons.chevronUp,
-                                size: 20,
-                                color: Colors.grey[500],
-                              );
-                            }
-                          }
-
-                          return GestureDetector(
-                            onTap: doVote,
-                            child: FaIcon(
-                              FontAwesomeIcons.chevronUp,
-                              size: 20,
-                              color: Colors.purple,
-                            ),
-                          );
-                        },
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(33),
+                        child: Container(
+                          width: 33,
+                          height: 33,
+                          child: widget.comments[widget.idx]['user']['image'] !=
+                                  null
+                              ? WidgetHelper.ImageLoader(
+                                  URLs.host.substring(0, URLs.host.length - 1) +
+                                      widget.comments[widget.idx]['user']
+                                              ['image']['formats']['thumbnail']
+                                          ['url'],
+                                )
+                              : Image.asset(
+                                  'assets/images/default_user_icon.png',
+                                  fit: BoxFit.cover,
+                                ),
+                        ),
                       ),
-                      Text(votes.toString()),
-                      BlocBuilder<VotedCommentBloc, List<Map>>(
-                        builder: (_, votesBloc) {
-                          bool isVoted = votesBloc
-                                  .where((e) =>
-                                      e['id_comment'] ==
-                                      widget.comments[widget.idx]['id'])
-                                  .toList()
-                                  .length >
-                              0;
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          widget.comments[widget.idx]['user']['username'],
+                          style: GoogleFonts.poppins(
+                            fontSize: 15.5,
+                            color: Color(0xFF3C3C3C),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      widget.isAdmin == true && isTagged == false
+                          ? Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 7,
+                                vertical: 4.5,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Color(0xFFDFDADA),
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              child: GestureDetector(
+                                onTap: () {
+                                  widget.callback(widget.idx);
+                                },
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      'Tandai Benar',
+                                      style: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 12,
+                                        color: Color(0xFF231C1C),
+                                      ),
+                                    ),
+                                    SizedBox(width: 3.8),
+                                    Icon(
+                                      Icons.check,
+                                      color: Colors.green,
+                                      size: 16,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            )
+                          : isTagged == true &&
+                                  widget.comments[widget.idx]['correct'] == true
+                              ? Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 4.5,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.purple[700],
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'Benar',
+                                        style: GoogleFonts.poppins(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 12,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      SizedBox(width: 3.8),
+                                      Icon(
+                                        Icons.check,
+                                        color: Colors.greenAccent,
+                                        size: 16,
+                                      )
+                                    ],
+                                  ),
+                                )
+                              : Container(),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.only(
+                    top: 8,
+                    bottom: 5,
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Column(
+                          children: [
+                            BlocBuilder<VotedCommentBloc, List<Map>>(
+                              builder: (_, votesBloc) {
+                                bool isVoted = votesBloc
+                                        .where((e) =>
+                                            e['id_comment'] ==
+                                            widget.comments[widget.idx]['id'])
+                                        .toList()
+                                        .length >
+                                    0;
 
-                          if (isVoted) {
-                            alreadyVote = votesBloc
-                                .where((e) =>
-                                    e['id_comment'] ==
-                                    widget.comments[widget.idx]['id'])
-                                .toList()
-                                .first['is_upvoted'];
-                          } else {
-                            alreadyVote = null;
-                          }
+                                if (isVoted) {
+                                  alreadyVote = votesBloc
+                                      .where((e) =>
+                                          e['id_comment'] ==
+                                          widget.comments[widget.idx]['id'])
+                                      .toList()
+                                      .first['is_upvoted'];
+                                } else {
+                                  alreadyVote = null;
+                                }
 
-                          if (isVoted) {
-                            Map data = votesBloc
-                                .where((e) =>
-                                    e['id_comment'] ==
-                                    widget.comments[widget.idx]['id'])
-                                .toList()
-                                .first;
-                            if (data['is_upvoted'] == false) {
-                              alreadyVote = false;
-                              return FaIcon(
-                                FontAwesomeIcons.chevronDown,
-                                size: 20,
-                                color: Colors.grey[500],
-                              );
-                            }
-                          }
+                                if (isVoted) {
+                                  Map data = votesBloc
+                                      .where((e) =>
+                                          e['id_comment'] ==
+                                          widget.comments[widget.idx]['id'])
+                                      .toList()
+                                      .first;
 
-                          return GestureDetector(
-                            onTap: doUnvote,
-                            child: FaIcon(
-                              FontAwesomeIcons.chevronDown,
-                              size: 20,
-                              color: Colors.purple,
+                                  if (data['is_upvoted'] == true) {
+                                    alreadyVote = true;
+                                    return FaIcon(
+                                      FontAwesomeIcons.chevronUp,
+                                      size: 20,
+                                      color: Colors.grey[500],
+                                    );
+                                  }
+                                }
+
+                                return GestureDetector(
+                                  onTap: doVote,
+                                  child: FaIcon(
+                                    FontAwesomeIcons.chevronUp,
+                                    size: 20,
+                                    color: Colors.purple,
+                                  ),
+                                );
+                              },
                             ),
-                          );
-                        },
+                            Text(votes.toString()),
+                            BlocBuilder<VotedCommentBloc, List<Map>>(
+                              builder: (_, votesBloc) {
+                                bool isVoted = votesBloc
+                                        .where((e) =>
+                                            e['id_comment'] ==
+                                            widget.comments[widget.idx]['id'])
+                                        .toList()
+                                        .length >
+                                    0;
+
+                                if (isVoted) {
+                                  alreadyVote = votesBloc
+                                      .where((e) =>
+                                          e['id_comment'] ==
+                                          widget.comments[widget.idx]['id'])
+                                      .toList()
+                                      .first['is_upvoted'];
+                                } else {
+                                  alreadyVote = null;
+                                }
+
+                                if (isVoted) {
+                                  Map data = votesBloc
+                                      .where((e) =>
+                                          e['id_comment'] ==
+                                          widget.comments[widget.idx]['id'])
+                                      .toList()
+                                      .first;
+                                  if (data['is_upvoted'] == false) {
+                                    alreadyVote = false;
+                                    return FaIcon(
+                                      FontAwesomeIcons.chevronDown,
+                                      size: 20,
+                                      color: Colors.grey[500],
+                                    );
+                                  }
+                                }
+
+                                return GestureDetector(
+                                  onTap: doUnvote,
+                                  child: FaIcon(
+                                    FontAwesomeIcons.chevronDown,
+                                    size: 20,
+                                    color: Colors.purple,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 5),
+                      Expanded(
+                        child: Text(
+                          widget.comments[widget.idx]['text'].trim(),
+                          style: GoogleFonts.poppins(
+                            fontSize: 13,
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(width: 5),
-                Expanded(
-                  child: Text(
-                    widget.comments[widget.idx]['text'].trim(),
-                    style: GoogleFonts.poppins(
-                      fontSize: 13,
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
-                ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
+          )
+        : Container();
   }
 }

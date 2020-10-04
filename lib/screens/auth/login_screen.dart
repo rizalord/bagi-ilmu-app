@@ -118,10 +118,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       Text(
                         'Login',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w600,
                           color: Color(0xFFD37348),
-                          fontSize: 20,
+                          fontSize: 25,
                         ),
                       ),
                       SizedBox(height: 10),

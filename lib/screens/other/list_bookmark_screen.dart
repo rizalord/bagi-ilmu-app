@@ -69,7 +69,11 @@ class _ListBookmarkScreenState extends State<ListBookmarkScreen> {
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
-          : data.length == 0
+          : data
+                      .where((e) => e['data'].runtimeType != String)
+                      .toList()
+                      .length ==
+                  0
               ? Center(
                   child: Text(
                     'Belum Ada Bookmark',
@@ -84,7 +88,10 @@ class _ListBookmarkScreenState extends State<ListBookmarkScreen> {
                         shrinkWrap: true,
                         reverse: true,
                         physics: NeverScrollableScrollPhysics(),
-                        itemCount: data.length,
+                        itemCount: data
+                            .where((e) => e['data'].runtimeType != String)
+                            .toList()
+                            .length,
                         itemBuilder: (_, item) {
                           if (data[item]['bookmark_type'] == 1) {
                             return Container(

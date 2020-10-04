@@ -1,11 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:unord/blocs/bookmark_bloc.dart';
 import 'package:unord/blocs/liked_notes_bloc.dart';
+import 'package:unord/components/error/image_404.dart';
 import 'package:unord/data/constants.dart';
 import 'package:unord/helpers/network_helper.dart';
 import 'package:unord/helpers/widget_helper.dart';
@@ -58,6 +61,24 @@ class _NoteCardState extends State<NoteCard> {
     }
   }
 
+  Future<bool> checkIsExist() async {
+    Response response =
+        await NetworkHelper().get('/notes/' + widget.data['id'].toString());
+
+    if (response.data.runtimeType == String) {
+      Fluttertoast.showToast(
+          msg: 'Catatan tidak ditemukan',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black.withOpacity(.7),
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+
+    return response.data.runtimeType != String;
+  }
+
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -74,10 +95,11 @@ class _NoteCardState extends State<NoteCard> {
         ),
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
-          onTap: () {
-            Modular.to.pushNamed('/note/detail', arguments: {
-              'id': widget.data['id'],
-            });
+          onTap: () async {
+            if (await checkIsExist())
+              Modular.to.pushNamed('/note/detail', arguments: {
+                'id': widget.data['id'],
+              });
           },
           child: Container(
             margin: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -94,11 +116,19 @@ class _NoteCardState extends State<NoteCard> {
                           width: 33,
                           height: 33,
                           child: widget.data['user']['image'] != null
-                              ? WidgetHelper.ImageLoader(
-                                  URLs.host.substring(0, URLs.host.length - 1) +
-                                      widget.data['user']['image']['formats']
-                                          ['thumbnail']['url'],
-                                )
+                              ? widget.data['user']['image']['formats']
+                                          ['thumbnail']['url'] !=
+                                      null
+                                  ? WidgetHelper.ImageLoader(
+                                      URLs.host.substring(
+                                              0, URLs.host.length - 1) +
+                                          widget.data['user']['image']
+                                              ['formats']['thumbnail']['url'],
+                                    )
+                                  : Image.asset(
+                                      'assets/images/default_user_icon.png',
+                                      fit: BoxFit.cover,
+                                    )
                               : Image.asset(
                                   'assets/images/default_user_icon.png',
                                   fit: BoxFit.cover,
@@ -144,11 +174,15 @@ class _NoteCardState extends State<NoteCard> {
                               0;
 
                           return GestureDetector(
-                            onTap: () async => !isBookmarked
-                                ? await BookmarkService()
-                                    .bookmarkNote(widget.data['id'])
-                                : await BookmarkService()
-                                    .unbookmarkNote(widget.data['id']),
+                            onTap: () async {
+                              if (await checkIsExist()) {
+                                !isBookmarked
+                                    ? await BookmarkService()
+                                        .bookmarkNote(widget.data['id'])
+                                    : await BookmarkService()
+                                        .unbookmarkNote(widget.data['id']);
+                              }
+                            },
                             child: Container(
                               child: Icon(
                                 isBookmarked
@@ -172,13 +206,18 @@ class _NoteCardState extends State<NoteCard> {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(7),
-                    child: WidgetHelper.ImageLoader(
-                      URLs.host.substring(0, URLs.host.length - 1) +
-                          (widget.data['image']['url'] != null
-                              ? widget.data['image']['url']
-                              : widget.data['image']['formats']['thumbnail']
-                                  ['url']),
-                    ),
+                    child: widget.data['image'] == null
+                        ? Image.asset(
+                            'assets/images/404.jpg',
+                            fit: BoxFit.cover,
+                          )
+                        : WidgetHelper.ImageLoader(
+                            URLs.host.substring(0, URLs.host.length - 1) +
+                                (widget.data['image']['url'] != null
+                                    ? widget.data['image']['url']
+                                    : widget.data['image']['formats']
+                                        ['thumbnail']['url']),
+                          ),
                   ),
                 ),
                 SizedBox(height: 10),
@@ -257,8 +296,8 @@ class _NoteCardState extends State<NoteCard> {
                     children: [
                       BlocBuilder<LikedNotesBloc, List<Map>>(
                         builder: (_, listLiked) => GestureDetector(
-                          onTap: () {
-                            toggleLike(listLiked);
+                          onTap: () async {
+                            if (await checkIsExist()) toggleLike(listLiked);
                           },
                           child: Container(
                             child: Row(

@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
+import 'package:unord/data/constants.dart';
 import 'package:unord/helpers/network_helper.dart';
 import 'package:unord/services/auth_service.dart';
 import 'package:unord/services/main_service.dart';
@@ -52,16 +54,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
       Response response = await NetworkHelper().post('auth/local/register',
           {'username': username, 'email': email, 'password': password});
 
-      setState(() {
-        isLoading = false;
-      });
-
-      if (response.data['statusCode'] != null)
+      if (response.data['statusCode'] != null) {
         message = response.data['message'].first['messages'].first['message'];
-      else {
+        setState(() {
+          isLoading = false;
+        });
+      } else {
         if (AuthService().saveUserData(response.data)) {
           await MainService().boot();
           MainService().registerBloc();
+          setState(() {
+            isLoading = false;
+          });
           Modular.to.pushReplacementNamed('/general');
         }
       }

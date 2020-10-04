@@ -78,15 +78,19 @@ class _DetailDiskusiScreenState extends State<DetailDiskusiScreen>
     Response response =
         await NetworkHelper().get('prs/' + widget.id.toString());
 
-    if (this.mounted)
-      setState(() {
-        detail = response.data;
-        likes = response.data['pr_likes'].length;
-      });
+    if (response.data.runtimeType == String) {
+      Modular.to.pop();
+    } else {
+      if (this.mounted)
+        setState(() {
+          detail = response.data;
+          likes = response.data['pr_likes'].length;
+        });
 
-    retrieveAllComments();
+      retrieveAllComments();
 
-    if (init == true) adminCheck();
+      if (init == true) adminCheck();
+    }
   }
 
   retrieveAllComments() async {
@@ -359,15 +363,27 @@ class _DetailDiskusiScreenState extends State<DetailDiskusiScreen>
                                     child: Stack(
                                       children: [
                                         Positioned.fill(
-                                          child: CachedNetworkImage(
-                                            imageUrl: URLs.host.substring(
-                                                    0, URLs.host.length - 1) +
-                                                (detail['image']['url'] != null
-                                                    ? detail['image']['url']
-                                                    : detail['image']['formats']
-                                                        ['thumbnail']['url']),
-                                            fit: BoxFit.cover,
-                                          ),
+                                          child: detail['image'] == null
+                                              ? Image.asset(
+                                                  'assets/images/404.jpg',
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : CachedNetworkImage(
+                                                  imageUrl: URLs.host.substring(
+                                                          0,
+                                                          URLs.host.length -
+                                                              1) +
+                                                      (detail['image']['url'] !=
+                                                              null
+                                                          ? detail['image']
+                                                              ['url']
+                                                          : detail['image']
+                                                                      [
+                                                                      'formats']
+                                                                  ['thumbnail']
+                                                              ['url']),
+                                                  fit: BoxFit.cover,
+                                                ),
                                         ),
                                         Positioned.fill(
                                           child: Material(
@@ -732,15 +748,20 @@ class _DetailDiskusiScreenState extends State<DetailDiskusiScreen>
                       onPositionUpdate: (position) {},
                       onScaleUpdate: (scale, zoom) {},
                       child: Center(
-                        child: CachedNetworkImage(
-                          imageUrl:
-                              URLs.host.substring(0, URLs.host.length - 1) +
-                                  (detail['image']['url'] != null
-                                      ? detail['image']['url']
-                                      : detail['image']['formats']['thumbnail']
-                                          ['url']),
-                          fit: BoxFit.fitWidth,
-                        ),
+                        child: detail['image'] == null
+                            ? Image.asset(
+                                'assets/images/404.jpg',
+                                fit: BoxFit.cover,
+                              )
+                            : CachedNetworkImage(
+                                imageUrl: URLs.host
+                                        .substring(0, URLs.host.length - 1) +
+                                    (detail['image']['url'] != null
+                                        ? detail['image']['url']
+                                        : detail['image']['formats']
+                                            ['thumbnail']['url']),
+                                fit: BoxFit.fitWidth,
+                              ),
                       ),
                     ),
                   ),

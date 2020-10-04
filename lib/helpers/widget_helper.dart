@@ -15,7 +15,10 @@ class WidgetHelper {
         fit: BoxFit.cover,
       );
     } catch (e) {
-      return Image.asset('assets/images/404.jpg');
+      return Image.asset(
+        'assets/images/404.jpg',
+        fit: BoxFit.cover,
+      );
     }
   }
 }

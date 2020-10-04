@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
@@ -62,12 +63,16 @@ class _DetailNoteScreenState extends State<DetailNoteScreen>
     Response response =
         await NetworkHelper().get('notes/' + widget.id.toString());
 
-    setState(() {
-      detail = response.data;
-      likes = response.data['note_likes'].length;
-    });
+    if (response.data.runtimeType == String) {
+      Modular.to.pop();
+    } else {
+      setState(() {
+        detail = response.data;
+        likes = response.data['note_likes'].length;
+      });
 
-    retrieveAllComments();
+      retrieveAllComments();
+    }
   }
 
   retrieveAllComments() async {
@@ -303,15 +308,27 @@ class _DetailNoteScreenState extends State<DetailNoteScreen>
                                     child: Stack(
                                       children: [
                                         Positioned.fill(
-                                          child: CachedNetworkImage(
-                                            imageUrl: URLs.host.substring(
-                                                    0, URLs.host.length - 1) +
-                                                (detail['image']['url'] != null
-                                                    ? detail['image']['url']
-                                                    : detail['image']['formats']
-                                                        ['thumbnail']['url']),
-                                            fit: BoxFit.cover,
-                                          ),
+                                          child: detail['image'] == null
+                                              ? Image.asset(
+                                                  'assets/images/404.jpg',
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : CachedNetworkImage(
+                                                  imageUrl: URLs.host.substring(
+                                                          0,
+                                                          URLs.host.length -
+                                                              1) +
+                                                      (detail['image']['url'] !=
+                                                              null
+                                                          ? detail['image']
+                                                              ['url']
+                                                          : detail['image']
+                                                                      [
+                                                                      'formats']
+                                                                  ['thumbnail']
+                                                              ['url']),
+                                                  fit: BoxFit.cover,
+                                                ),
                                         ),
                                         Positioned.fill(
                                           child: Material(
@@ -655,15 +672,20 @@ class _DetailNoteScreenState extends State<DetailNoteScreen>
                       onPositionUpdate: (position) {},
                       onScaleUpdate: (scale, zoom) {},
                       child: Center(
-                        child: CachedNetworkImage(
-                          imageUrl:
-                              URLs.host.substring(0, URLs.host.length - 1) +
-                                  (detail['image']['url'] != null
-                                      ? detail['image']['url']
-                                      : detail['image']['formats']['thumbnail']
-                                          ['url']),
-                          fit: BoxFit.fitWidth,
-                        ),
+                        child: detail['image'] == null
+                            ? Image.asset(
+                                'assets/images/404.jpg',
+                                fit: BoxFit.cover,
+                              )
+                            : CachedNetworkImage(
+                                imageUrl: URLs.host
+                                        .substring(0, URLs.host.length - 1) +
+                                    (detail['image']['url'] != null
+                                        ? detail['image']['url']
+                                        : detail['image']['formats']
+                                            ['thumbnail']['url']),
+                                fit: BoxFit.fitWidth,
+                              ),
                       ),
                     ),
                   ),
