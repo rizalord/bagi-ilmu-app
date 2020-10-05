@@ -6,31 +6,27 @@ import 'package:unord/helpers/network_helper.dart';
 
 class NoteService extends DatabaseHelper {
   Future<bool> like(int id) async {
-    try {
-      var userId = box.get('user_data')['id'];
+    var userId = box.get('user_data')['id'];
 
-      Response response = await NetworkHelper().post('note-likes', {
-        'note': id,
-        'user': userId,
-      });
+    Response response = await NetworkHelper().post('note-likes', {
+      'note': id,
+      'user': userId,
+    });
 
-      var likeId = response.data['id'];
+    var likeId = response.data['id'];
 
-      List<Map> likedNotes =
-          box.get('liked_notes', defaultValue: []).cast<Map>();
+    List<Map> likedNotes = box.get('liked_notes', defaultValue: []).cast<Map>();
 
-      likedNotes.add({
-        'id_catatan': id,
-        'id_like': likeId,
-      });
+    Map<String, dynamic> newData = Map.from({
+      'id_catatan': id,
+      'id_like': likeId,
+    });
 
-      box.put('liked_notes', likedNotes);
+    likedNotes.add(newData);
 
-      Modular.get<LikedNotesBloc>().add(likedNotes);
-    } catch (e) {
-      print(e);
-      return false;
-    }
+    box.put('liked_notes', likedNotes);
+
+    Modular.get<LikedNotesBloc>().add(likedNotes);
 
     return true;
   }

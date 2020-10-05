@@ -20,10 +20,12 @@ class DiskusiService extends DatabaseHelper {
       List<Map> likedDiskusi =
           box.get('liked_diskusi', defaultValue: []).cast<Map>();
 
-      likedDiskusi.add({
+      Map<String, dynamic> newData = Map.from({
         'id_diskusi': id,
         'id_like': likeId,
       });
+
+      likedDiskusi.add(newData);
 
       box.put('liked_diskusi', likedDiskusi);
 
