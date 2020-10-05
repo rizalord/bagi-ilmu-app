@@ -32,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen>
     if (this.mounted)
       setState(() {
         isLoading = true;
+        start = 0;
       });
 
     Response response1 = await NetworkHelper()

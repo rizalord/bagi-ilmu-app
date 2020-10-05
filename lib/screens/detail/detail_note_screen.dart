@@ -263,13 +263,12 @@ class _DetailNoteScreenState extends State<DetailNoteScreen>
                                         builder: (_, bookmarks) {
                                           bool isBookmarked = bookmarks
                                                   .where((e) =>
-                                                      e['bookmark_type']
-                                                              ['id'] ==
+                                                      e['bookmark_type'] ==
                                                           1 &&
                                                       e['note'] != null)
                                                   .toList()
                                                   .where((element) =>
-                                                      element['note']['id'] ==
+                                                      element['note'] ==
                                                       widget.id)
                                                   .toList()
                                                   .length >

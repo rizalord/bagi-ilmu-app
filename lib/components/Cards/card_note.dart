@@ -163,11 +163,11 @@ class _NoteCardState extends State<NoteCard> {
                         builder: (_, bookmarks) {
                           bool isBookmarked = bookmarks
                                   .where((e) =>
-                                      e['bookmark_type']['id'] == 1 &&
+                                      e['bookmark_type'] == 1 &&
                                       e['note'] != null)
                                   .toList()
                                   .where((element) =>
-                                      element['note']['id'] ==
+                                      element['note'] ==
                                       widget.data['id'])
                                   .toList()
                                   .length >

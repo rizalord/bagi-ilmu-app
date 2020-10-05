@@ -28,20 +28,20 @@ class _ListBookmarkScreenState extends State<ListBookmarkScreen> {
   retrieveAllData() async {
     List bookmarks = Hive.box(boxName).get('bookmarks', defaultValue: []);
     for (var element in bookmarks) {
-      if (element['bookmark_type']['id'] == 1 && element['note'] != null) {
+      if (element['bookmark_type'] == 1 && element['note'] != null) {
         Response response = await NetworkHelper()
-            .get('notes/' + element['note']['id'].toString());
+            .get('notes/' + element['note'].toString());
 
         data.add({'bookmark_type': 1, 'data': response.data});
-      } else if (element['bookmark_type']['id'] == 2 && element['pr'] != null) {
+      } else if (element['bookmark_type'] == 2 && element['pr'] != null) {
         Response response =
-            await NetworkHelper().get('prs/' + element['pr']['id'].toString());
+            await NetworkHelper().get('prs/' + element['pr'].toString());
 
         data.add({'bookmark_type': 2, 'data': response.data});
-      } else if (element['bookmark_type']['id'] == 3 &&
+      } else if (element['bookmark_type'] == 3 &&
           element['course'] != null) {
         Response response = await NetworkHelper()
-            .get('courses/' + element['course']['id'].toString());
+            .get('courses/' + element['course'].toString());
 
         data.add({'bookmark_type': 3, 'data': response.data});
       }

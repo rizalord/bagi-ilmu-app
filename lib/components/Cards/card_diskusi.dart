@@ -157,11 +157,11 @@ class _DiskusiCardState extends State<DiskusiCard> {
                         builder: (_, bookmarks) {
                           bool isBookmarked = bookmarks
                                   .where((e) =>
-                                      e['bookmark_type']['id'] == 2 &&
+                                      e['bookmark_type'] == 2 &&
                                       e['pr'] != null)
                                   .toList()
                                   .where((element) =>
-                                      element['pr']['id'] == widget.data['id'])
+                                      element['pr'] == widget.data['id'])
                                   .toList()
                                   .length >
                               0;
@@ -327,53 +327,53 @@ class _DiskusiCardState extends State<DiskusiCard> {
                           color: Colors.black,
                         ),
                       ),
-                      // widget.enableDelete
-                      //     ? Expanded(
-                      //         child: GestureDetector(
-                      //           onTap: () {
-                      //             showDialog(
-                      //               context: context,
-                      //               builder: (_) => AlertDialog(
-                      //                 title: Text(
-                      //                     'Apa anda yakin untuk menghapus?'),
-                      //                 actions: [
-                      //                   FlatButton(
-                      //                     onPressed: () => Modular.to.pop(),
-                      //                     child: Text('Tidak'),
-                      //                   ),
-                      //                   FlatButton(
-                      //                     onPressed: () async {
-                      //                       await NetworkHelper().delete(
-                      //                         'prs/' +
-                      //                             widget.data['id'].toString(),
-                      //                       );
-                      //                       Modular.to.pop();
-                      //                       Future.delayed(
-                      //                           Duration(milliseconds: 500),
-                      //                           () {
-                      //                         widget.deleteCallback();
-                      //                       });
-                      //                     },
-                      //                     child: Text('Ya'),
-                      //                   ),
-                      //                 ],
-                      //               ),
-                      //             );
-                      //           },
-                      //           child: Container(
-                      //             margin: EdgeInsets.only(right: 10),
-                      //             child: Text(
-                      //               'Hapus',
-                      //               style: GoogleFonts.poppins(
-                      //                 fontSize: 12,
-                      //                 color: Colors.black,
-                      //               ),
-                      //               textAlign: TextAlign.right,
-                      //             ),
-                      //           ),
-                      //         ),
-                      //       )
-                      //     : Container(),
+                      widget.enableDelete
+                          ? Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (_) => AlertDialog(
+                                      title: Text(
+                                          'Apa anda yakin untuk menghapus?'),
+                                      actions: [
+                                        FlatButton(
+                                          onPressed: () => Modular.to.pop(),
+                                          child: Text('Tidak'),
+                                        ),
+                                        FlatButton(
+                                          onPressed: () async {
+                                            await NetworkHelper().delete(
+                                              'prs/' +
+                                                  widget.data['id'].toString(),
+                                            );
+                                            Modular.to.pop();
+                                            Future.delayed(
+                                                Duration(milliseconds: 500),
+                                                () {
+                                              widget.deleteCallback();
+                                            });
+                                          },
+                                          child: Text('Ya'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.only(right: 10),
+                                  child: Text(
+                                    'Hapus',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 12,
+                                      color: Colors.black,
+                                    ),
+                                    textAlign: TextAlign.right,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Container(),
                     ],
                   ),
                 )

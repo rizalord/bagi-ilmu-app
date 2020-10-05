@@ -14,30 +14,36 @@ import 'package:unord/services/auth_service.dart';
 
 class MainService extends DatabaseHelper {
   Future<void> boot() async {
-    await getLikedNote();
-    await getLikedDiskusi();
-    await getVotedComment();
-    await getEducations();
-    await getSubjects();
-    await getBookmarks();
+    var userId = box.get('user_data', defaultValue: null)['id'];
+    Response response = await NetworkHelper().get('users/' + userId.toString());
+
+    getEducations();
+    getSubjects();
+    await getLikedNote(passedData: response.data['note_likes']);
+    await getLikedDiskusi(passedData: response.data['pr_likes']);
+    await getBookmarks(passedData: response.data['bookmarks']);
+    await getVotedComment(passedData: response.data['pr_vote_comments']);
   }
 
-  Future<void> getBookmarks() async {
+  Future<void> getBookmarks({passedData}) async {
     var userId = box.get('user_data')['id'];
-    Response response = await NetworkHelper().get('bookmarks?user.id=$userId');
+    List tmpData = passedData == null
+        ? (await NetworkHelper().get('bookmarks?user.id=$userId')).data
+        : passedData;
 
-    List<Map> data = response.data.map((e) => e).toList().cast<Map>();
+    List<Map> data = tmpData.map((e) => e).toList().cast<Map>();
 
     box.put('bookmarks', data);
     Modular.get<BookmarkBloc>().add(data);
   }
 
-  Future<void> getVotedComment() async {
+  Future<void> getVotedComment({passedData}) async {
     var userId = box.get('user_data')['id'];
-    Response response =
-        await NetworkHelper().get('pr-vote-comments?user.id=$userId');
+    List tmpData = passedData == null
+        ? (await NetworkHelper().get('pr-vote-comments?user.id=$userId')).data
+        : passedData;
 
-    List<Map> data = response.data
+    List<Map> data = tmpData
         .where((e) => e['pr_comment'] != null)
         .map(
           (e) => {
@@ -85,15 +91,18 @@ class MainService extends DatabaseHelper {
     Modular.get<EducationBloc>().add(data);
   }
 
-  Future<void> getLikedNote() async {
+  Future<void> getLikedNote({passedData}) async {
     var userId = box.get('user_data')['id'];
-    Response response = await NetworkHelper().get('note-likes?user.id=$userId');
 
-    List<Map> data = response.data
+    List tmpData = passedData == null
+        ? (await NetworkHelper().get('note-likes?user.id=$userId')).data
+        : passedData;
+
+    List<Map> data = tmpData
         .where((e) => e['note'] != null)
         .map(
           (e) => {
-            'id_catatan': e['note']['id'],
+            'id_catatan': e['note'],
             'id_like': e['id'],
           },
         )
@@ -104,15 +113,17 @@ class MainService extends DatabaseHelper {
     Modular.get<LikedNotesBloc>().add(data);
   }
 
-  Future<void> getLikedDiskusi() async {
+  Future<void> getLikedDiskusi({passedData}) async {
     var userId = box.get('user_data')['id'];
-    Response response = await NetworkHelper().get('pr-likes?user.id=$userId');
+    List tmpData = passedData == null
+        ? (await NetworkHelper().get('pr-likes?user.id=$userId')).data
+        : passedData;
 
-    List<Map> data = response.data
+    List<Map> data = tmpData
         .where((e) => e['pr'] != null)
         .map(
           (e) => {
-            'id_diskusi': e['pr']['id'],
+            'id_diskusi': e['pr'],
             'id_like': e['id'],
           },
         )

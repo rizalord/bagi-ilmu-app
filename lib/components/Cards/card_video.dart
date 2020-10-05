@@ -149,11 +149,11 @@ class _VideoCardState extends State<VideoCard> {
                         builder: (_, bookmarks) {
                           bool isBookmarked = bookmarks
                                   .where((e) =>
-                                      e['bookmark_type']['id'] == 3 &&
+                                      e['bookmark_type'] == 3 &&
                                       e['course'] != null)
                                   .toList()
                                   .where((element) =>
-                                      element['course']['id'] ==
+                                      element['course'] ==
                                       widget.data['id'])
                                   .toList()
                                   .length >

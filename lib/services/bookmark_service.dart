@@ -18,6 +18,9 @@ class BookmarkService extends DatabaseHelper {
       });
 
       var bookmarkResponse = response.data;
+      bookmarkResponse['bookmark_type'] = 1;
+      bookmarkResponse['note'] = bookmarkResponse['note']['id'];
+      bookmarkResponse['user'] = bookmarkResponse['user']['id'];
 
       List<Map> bookmarks = box.get('bookmarks', defaultValue: []).cast<Map>();
 
@@ -36,13 +39,12 @@ class BookmarkService extends DatabaseHelper {
 
   Future<bool> unbookmarkNote(int id) async {
     try {
-
       List<Map> bookmarks = box.get('bookmarks', defaultValue: []).cast<Map>();
 
       Map targetDelete = bookmarks
-          .where((e) => e['bookmark_type']['id'] == 1 && e['note'] != null)
+          .where((e) => e['bookmark_type'] == 1 && e['note'] != null)
           .toList()
-          .where((e) => e['note']['id'] == id)
+          .where((e) => e['note'] == id)
           .toList()
           .first;
 
@@ -76,6 +78,9 @@ class BookmarkService extends DatabaseHelper {
       });
 
       var bookmarkResponse = response.data;
+      bookmarkResponse['bookmark_type'] = 2;
+      bookmarkResponse['pr'] = bookmarkResponse['pr']['id'];
+      bookmarkResponse['user'] = bookmarkResponse['user']['id'];
 
       List<Map> bookmarks = box.get('bookmarks', defaultValue: []).cast<Map>();
 
@@ -94,13 +99,12 @@ class BookmarkService extends DatabaseHelper {
 
   Future<bool> unbookmarkDiskusi(int id) async {
     try {
-
       List<Map> bookmarks = box.get('bookmarks', defaultValue: []).cast<Map>();
 
       Map targetDelete = bookmarks
-          .where((e) => e['bookmark_type']['id'] == 2 && e['pr'] != null)
+          .where((e) => e['bookmark_type'] == 2 && e['pr'] != null)
           .toList()
-          .where((e) => e['pr']['id'] == id)
+          .where((e) => e['pr'] == id)
           .toList()
           .first;
 
@@ -134,6 +138,9 @@ class BookmarkService extends DatabaseHelper {
       });
 
       var bookmarkResponse = response.data;
+      bookmarkResponse['bookmark_type'] = 3;
+      bookmarkResponse['course'] = bookmarkResponse['course']['id'];
+      bookmarkResponse['user'] = bookmarkResponse['user']['id'];
 
       List<Map> bookmarks = box.get('bookmarks', defaultValue: []).cast<Map>();
 
@@ -152,13 +159,12 @@ class BookmarkService extends DatabaseHelper {
 
   Future<bool> unbookmarkVideo(int id) async {
     try {
-
       List<Map> bookmarks = box.get('bookmarks', defaultValue: []).cast<Map>();
 
       Map targetDelete = bookmarks
-          .where((e) => e['bookmark_type']['id'] == 3 && e['course'] != null)
+          .where((e) => e['bookmark_type'] == 3 && e['course'] != null)
           .toList()
-          .where((e) => e['course']['id'] == id)
+          .where((e) => e['course'] == id)
           .toList()
           .first;
 

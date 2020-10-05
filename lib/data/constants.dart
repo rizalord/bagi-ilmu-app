@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 mixin URLs {
   static const String host = 'https://unord-rest-api.herokuapp.com/';
+  // static const String host = 'http://192.168.43.233:1337/';
 }
 
 mixin AppLimit {

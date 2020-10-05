@@ -317,13 +317,12 @@ class _DetailDiskusiScreenState extends State<DetailDiskusiScreen>
                                         builder: (_, bookmarks) {
                                           bool isBookmarked = bookmarks
                                                   .where((e) =>
-                                                      e['bookmark_type']
-                                                              ['id'] ==
+                                                      e['bookmark_type'] ==
                                                           2 &&
                                                       e['pr'] != null)
                                                   .toList()
                                                   .where((element) =>
-                                                      element['pr']['id'] ==
+                                                      element['pr'] ==
                                                       widget.id)
                                                   .toList()
                                                   .length >
