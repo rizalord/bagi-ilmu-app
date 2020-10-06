@@ -47,7 +47,7 @@ class MainService extends DatabaseHelper {
         .where((e) => e['pr_comment'] != null)
         .map(
           (e) => {
-            'id_comment': e['pr_comment']['id'],
+            'id_comment': e['pr_comment'],
             'id_vote': e['id'],
             'is_upvoted': e['isUpvoted'] == true
           },

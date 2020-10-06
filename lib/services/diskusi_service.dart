@@ -77,12 +77,14 @@ class DiskusiService extends DatabaseHelper {
       // Save to local
       List<Map> votedComments =
           box.get('voted_comments', defaultValue: []).cast<Map>();
-
-      votedComments.add({
+      
+      Map<String, dynamic> newData = Map.from({
         'id_comment': idKomen,
         'id_vote': response.data['id'],
         'is_upvoted': true,
       });
+
+      votedComments.add(newData);
 
       box.put('voted_comments', votedComments);
 
@@ -109,11 +111,13 @@ class DiskusiService extends DatabaseHelper {
       List<Map> votedComments =
           box.get('voted_comments', defaultValue: []).cast<Map>();
 
-      votedComments.add({
+      Map<String, dynamic> newData = Map.from({
         'id_comment': idKomen,
         'id_vote': response.data['id'],
         'is_upvoted': false,
       });
+
+      votedComments.add(newData);
 
       box.put('voted_comments', votedComments);
 
